@@ -81,11 +81,11 @@ struct FlyoverRoute {
         let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2)
         let diag = CLLocation(latitude: minLat, longitude: minLon)
             .distance(from: CLLocation(latitude: maxLat, longitude: maxLon))
-        return MapCamera(centerCoordinate: center, distance: max(1500, diag * 2.4), heading: 0, pitch: 50)
+        return MapCamera(centerCoordinate: center, distance: max(2500, diag * 3.6), heading: 0, pitch: 45)
     }
 
     /// Distance de la caméra en mode suivi, adaptée à la longueur du parcours.
-    var followDistance: Double { min(2600, max(700, total * 0.12)) }
+    var followDistance: Double { min(4500, max(1800, total * 0.35)) }
 
     /// Durée de la phase de suivi : ~12 s pour 1 km, 35 s max.
     var playDuration: Double { min(35, max(12, 10 + total / 1000 * 1.5)) }
@@ -374,10 +374,10 @@ struct FlyoverView: View {
         }
     }
 
-    private var lookAhead: Double { max(120, route.total * 0.03) }
+    private var lookAhead: Double { max(250, route.total * 0.05) }
 
     private func followCamera(_ c: CLLocationCoordinate2D) -> MapCamera {
-        MapCamera(centerCoordinate: c, distance: route.followDistance, heading: heading, pitch: 65)
+        MapCamera(centerCoordinate: c, distance: route.followDistance, heading: heading, pitch: 60)
     }
 }
 
