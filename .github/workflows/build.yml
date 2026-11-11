@@ -1,0 +1,73 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Choisir Xcode
+        run: |
+          XC=$(ls -d /Applications/Xcode_*.app | grep -vi beta | sort -V | tail -1)
+          echo "Xcode: $XC"
+          sudo xcode-select -s "$XC"
+          xcodebuild -version
+          mkdir -p output/screens
+
+      - name: Compiler pour iPhone (ipa non signée)
+        run: |
+          set -o pipefail
+          xcodebuild build -project Foulee.xcodeproj -target Foulee -configuration Release \
+            -sdk iphoneos SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee output/build-device.log | grep -E "error:|warning:|BUILD" || true
+          test -d build/Release-iphoneos/Foulee.app
+          mkdir -p Payload && cp -R build/Release-iphoneos/Foulee.app Payload/
+          zip -qry output/Foulee.ipa Payload
+          ls -la output/Foulee.ipa
+
+      - name: Compiler pour le simulateur
+        run: |
+          set -o pipefail
+          xcodebuild build -project Foulee.xcodeproj -target Foulee -configuration Debug \
+            -sdk iphonesimulator -arch arm64 SYMROOT="$PWD/build" \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee output/build-sim.log | grep -E "error:|warning:|BUILD" || true
+          test -d build/Debug-iphonesimulator/Foulee.app
+
+      - name: Captures dans le simulateur
+        run: bash scripts/screenshots.sh build/Debug-iphonesimulator/Foulee.app output
+
+      - name: Résumé des erreurs
+        if: always()
+        run: |
+          grep -hE "error:" output/*.log | sort -u > output/errors.txt || true
+          echo "Erreurs : $(wc -l < output/errors.txt)"
+          head -50 output/errors.txt
+          for f in output/*.log; do tail -c 200000 "$f" > "$f.tmp" && mv "$f.tmp" "$f"; done
+
+      - name: Publier les résultats sur la branche output
+        if: always()
+        run: |
+          cd output
+          git init -q -b output
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -qm "Build ${GITHUB_SHA::7} (${{ job.status }})"
+          git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" output
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: foulee
+          path: output
