@@ -95,7 +95,7 @@ struct RecordView: View {
     private var idleControls: some View {
         if tracker.isDenied {
             VStack(spacing: 10) {
-                Text("Entraîneur Valentin a besoin de ta position pour tracer tes courses.")
+                Text("Valentin Entraîneur a besoin de ta position pour tracer tes courses.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                 Button("Ouvrir les Réglages") {

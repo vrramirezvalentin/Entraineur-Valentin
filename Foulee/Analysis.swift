@@ -50,7 +50,7 @@ enum RunAnalysis {
         let iso = ISO8601DateFormatter()
         var s = """
         <?xml version="1.0" encoding="UTF-8"?>
-        <gpx version="1.1" creator="Entraineur Valentin" xmlns="http://www.topografix.com/GPX/1/1">
+        <gpx version="1.1" creator="Valentin Entraineur" xmlns="http://www.topografix.com/GPX/1/1">
         <trk><name>\(escape(name))</name><type>running</type>
 
         """
