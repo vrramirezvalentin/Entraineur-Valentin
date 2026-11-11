@@ -185,8 +185,8 @@ struct FlyoverView: View {
                 }
                 .shadow(radius: 4)
             }
+            .annotationTitles(.hidden)
         }
-        .annotationTitles(.hidden)
         .mapStyle(satellite ? .imagery(elevation: .realistic) : .standard(elevation: .realistic))
         .mapControlVisibility(.hidden)
     }

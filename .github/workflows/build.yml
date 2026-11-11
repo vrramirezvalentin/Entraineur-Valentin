@@ -13,7 +13,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Choisir Xcode
         run: |
@@ -25,24 +25,30 @@ jobs:
 
       - name: Compiler pour iPhone (ipa non signée)
         run: |
-          set -o pipefail
+          set +e
           xcodebuild build -project Foulee.xcodeproj -target Foulee -configuration Release \
             -sdk iphoneos SYMROOT="$PWD/build" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
-            2>&1 | tee output/build-device.log | grep -E "error:|warning:|BUILD" || true
-          test -d build/Release-iphoneos/Foulee.app
+            > output/build-device.log 2>&1; STATUS=$?
+          grep -E "error:|BUILD" output/build-device.log || true
+          set -e
+          test $STATUS -eq 0
+          test -f build/Release-iphoneos/Foulee.app/Foulee
           mkdir -p Payload && cp -R build/Release-iphoneos/Foulee.app Payload/
           zip -qry output/Foulee.ipa Payload
           ls -la output/Foulee.ipa
 
       - name: Compiler pour le simulateur
         run: |
-          set -o pipefail
+          set +e
           xcodebuild build -project Foulee.xcodeproj -target Foulee -configuration Debug \
             -sdk iphonesimulator -arch arm64 SYMROOT="$PWD/build" \
             CODE_SIGNING_ALLOWED=NO \
-            2>&1 | tee output/build-sim.log | grep -E "error:|warning:|BUILD" || true
-          test -d build/Debug-iphonesimulator/Foulee.app
+            > output/build-sim.log 2>&1; STATUS=$?
+          grep -E "error:|BUILD" output/build-sim.log || true
+          set -e
+          test $STATUS -eq 0
+          test -f build/Debug-iphonesimulator/Foulee.app/Foulee
 
       - name: Captures dans le simulateur
         run: bash scripts/screenshots.sh build/Debug-iphonesimulator/Foulee.app output
@@ -66,7 +72,7 @@ jobs:
           git commit -qm "Build ${GITHUB_SHA::7} (${{ job.status }})"
           git push -qf "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" output
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: foulee

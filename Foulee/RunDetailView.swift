@@ -87,15 +87,16 @@ struct RunDetailView: View {
                     Circle().fill(.green).frame(width: 14, height: 14)
                         .overlay(Circle().stroke(.white, lineWidth: 3))
                 }
+                .annotationTitles(.hidden)
             }
             if let last = points.last {
                 Annotation("Arrivée", coordinate: last.coordinate) {
                     Circle().fill(.red).frame(width: 14, height: 14)
                         .overlay(Circle().stroke(.white, lineWidth: 3))
                 }
+                .annotationTitles(.hidden)
             }
         }
-        .annotationTitles(.hidden)
         .mapStyle(.standard(pointsOfInterest: .excludingAll))
         .frame(height: 280)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
