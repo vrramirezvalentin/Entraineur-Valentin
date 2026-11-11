@@ -211,7 +211,7 @@ struct FlyoverView: View {
                     }
                     .tint(.primary)
                 } else {
-                    Label("Foulée", systemImage: "figure.run")
+                    Label("Entraîneur Valentin", systemImage: "figure.run")
                         .font(.caption.bold())
                         .foregroundStyle(.orange)
                 }
@@ -416,7 +416,7 @@ enum Recorder {
         let unsafe = CharacterSet(charactersIn: "/\\:?%*|\"<>")
         let safe = name.components(separatedBy: unsafe).joined()
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("Foulee - \(safe.isEmpty ? "course" : safe).mp4")
+            .appendingPathComponent("Entraineur Valentin - \(safe.isEmpty ? "course" : safe).mp4")
         try? FileManager.default.removeItem(at: url)
         return try await withCheckedThrowingContinuation { cont in
             RPScreenRecorder.shared().stopRecording(withOutput: url) { error in
@@ -485,7 +485,7 @@ struct VideoResultView: View {
             .alert("Accès à Photos refusé", isPresented: $saveError) {
                 Button("OK", role: .cancel) {}
             } message: {
-                Text("Autorise Foulée à ajouter des photos dans Réglages, ou utilise Partager.")
+                Text("Autorise Entraîneur Valentin à ajouter des photos dans Réglages, ou utilise Partager.")
             }
         }
     }

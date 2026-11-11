@@ -1,5 +1,5 @@
 #!/bin/bash
-# Lance Foulée dans un simulateur iPhone avec des données de démo et capture les écrans.
+# Lance Entraîneur Valentin dans un simulateur iPhone avec des données de démo et capture les écrans.
 set -u
 APP="$1"; OUT="$2"
 BID="app.foulee.perso.k7r2"
