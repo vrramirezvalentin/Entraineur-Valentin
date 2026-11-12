@@ -59,6 +59,10 @@ struct StatsView: View {
         let time = list.reduce(0.0) { $0 + $1.movingTime }
         let elevation = list.reduce(0.0) { $0 + $1.elevationGain }
         let pace = distance > 0 ? time / distance * 1000 : 0
+        let counted = list.filter { $0.steps > 0 }
+        let steps = counted.reduce(0) { $0 + $1.steps }
+        let countedTime = counted.reduce(0.0) { $0 + $1.movingTime }
+        let cadence = countedTime > 0 ? Double(steps) / countedTime * 60 : 0
         return LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
             SummaryCard(title: "Distance", value: Fmt.km(distance, decimals: 1), unit: "km")
             SummaryCard(title: "Courses", value: "\(list.count)", unit: nil)
@@ -66,6 +70,8 @@ struct StatsView: View {
             SummaryCard(title: "Allure moy.", value: Fmt.pace(pace), unit: "/km")
             SummaryCard(title: "Dénivelé +", value: "\(Int(elevation.rounded()))", unit: "m")
             SummaryCard(title: "Plus longue", value: Fmt.km(list.map(\.distance).max() ?? 0, decimals: 1), unit: "km")
+            SummaryCard(title: "Pas", value: Fmt.steps(steps), unit: nil)
+            SummaryCard(title: "Cadence moy.", value: Fmt.cadence(cadence), unit: "pas/min")
         }
     }
 

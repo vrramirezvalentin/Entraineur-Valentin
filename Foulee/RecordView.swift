@@ -18,7 +18,7 @@ struct RecordView: View {
         ZStack(alignment: .bottom) {
             Map(position: $camera) {
                 UserAnnotation()
-                ForEach(Array(tracker.points.coordinateSegments.enumerated()), id: \.offset) { _, segment in
+                ForEach(Array(tracker.points.coordinateSegments(maxPoints: 1500).enumerated()), id: \.offset) { _, segment in
                     MapPolyline(coordinates: segment)
                         .stroke(.orange, style: StrokeStyle(lineWidth: 6, lineCap: .round, lineJoin: .round))
                 }
@@ -132,6 +132,17 @@ struct RecordView: View {
                     LiveStat(title: "Allure", value: Fmt.pace(tracker.currentPace), unit: "/km")
                     LiveStat(title: "Moyenne", value: Fmt.pace(average), unit: "/km")
                 }
+                HStack {
+                    LiveStat(title: "Pas", value: Fmt.steps(tracker.steps), unit: "pas", small: true)
+                    LiveStat(title: "Cadence", value: Fmt.cadence(tracker.cadence), unit: "pas/min", small: true)
+                    LiveStat(title: "Dénivelé +", value: "\(Int(tracker.elevationGain.rounded()))", unit: "m", small: true)
+                }
+                if tracker.isPedometerDenied {
+                    Text("Pour compter les pas, autorise « Mouvements et forme » dans les Réglages de l'appli.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
     }
@@ -181,6 +192,7 @@ struct RecordView: View {
 
     private var gpsBadge: some View {
         let (text, color): (String, Color) = {
+            if tracker.isReducedAccuracy { return ("Active « Position exacte » dans Réglages", .red) }
             guard let acc = tracker.gpsAccuracy else { return ("Recherche GPS…", .gray) }
             if acc <= 10 { return ("GPS excellent", .green) }
             if acc <= 25 { return ("GPS correct", .yellow) }
@@ -197,6 +209,7 @@ private struct LiveStat: View {
     let title: String
     let value: String
     let unit: String
+    var small = false
 
     var body: some View {
         VStack(spacing: 2) {
@@ -204,7 +217,7 @@ private struct LiveStat: View {
                 .font(.caption2.weight(.semibold))
                 .foregroundStyle(.secondary)
             Text(value)
-                .font(.system(.title2, design: .rounded).weight(.bold))
+                .font(.system(small ? .title3 : .title2, design: .rounded).weight(.bold))
                 .monospacedDigit()
             Text(unit)
                 .font(.caption)

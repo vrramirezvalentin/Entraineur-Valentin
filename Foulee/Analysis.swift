@@ -111,6 +111,16 @@ enum Fmt {
         (meters / 1000).formatted(.number.precision(.fractionLength(decimals)))
     }
 
+    /// 7 492 (pas), ou – si inconnu
+    static func steps(_ count: Int) -> String {
+        count > 0 ? count.formatted(.number) : "–"
+    }
+
+    /// 172 (pas/min), ou – si inconnue
+    static func cadence(_ perMinute: Double) -> String {
+        perMinute.isFinite && perMinute >= 30 ? "\(Int(perMinute.rounded()))" : "–"
+    }
+
     static func spokenDuration(_ seconds: Double) -> String {
         let t = max(0, Int(seconds.rounded()))
         let h = t / 3600, m = (t % 3600) / 60, s = t % 60
@@ -118,7 +128,7 @@ enum Fmt {
             return "\(h) heure\(h > 1 ? "s" : "") \(m) minute\(m > 1 ? "s" : "")"
         }
         if m > 0 {
-            return "\(m) minute\(m > 1 ? "s" : "") \(s)"
+            return s > 0 ? "\(m) minute\(m > 1 ? "s" : "") \(s)" : "\(m) minute\(m > 1 ? "s" : "")"
         }
         return "\(s) secondes"
     }

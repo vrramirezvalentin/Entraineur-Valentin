@@ -113,6 +113,13 @@ struct RunDetailView: View {
             StatCell(title: "Dénivelé +", value: "\(Int(run.elevationGain.rounded()))", unit: "m")
             StatCell(title: "Vitesse moy.", value: speed, unit: "km/h")
             StatCell(title: "Temps total", value: Fmt.duration(run.elapsedTime), unit: nil)
+            if run.steps > 0 {
+                StatCell(title: "Pas", value: Fmt.steps(run.steps), unit: nil)
+                StatCell(title: "Cadence moy.", value: Fmt.cadence(run.averageCadence), unit: "pas/min")
+                StatCell(title: "Foulée moy.",
+                         value: run.strideLength.formatted(.number.precision(.fractionLength(2))),
+                         unit: "m")
+            }
         }
     }
 

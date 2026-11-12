@@ -3,10 +3,32 @@ import Foundation
 import SwiftData
 
 /// Données de démonstration, uniquement dans les builds Debug (simulateur).
-/// Lancement : -demo YES  [-screen record|running|history|detail|stats|flyover]
+/// Lancement : -demo YES  [-screen record|running|history|detail|stats|flyover|flyoverStill|export]
+///              [-demoPlace alti]  (parcours de test à 2 700 m d'altitude, sur le glacier de la Plaine Morte)
 enum DemoData {
     static var isEnabled: Bool { UserDefaults.standard.bool(forKey: "demo") }
     static var screen: String { UserDefaults.standard.string(forKey: "screen") ?? "" }
+    static var isHighAltitude: Bool { UserDefaults.standard.string(forKey: "demoPlace") == "alti" }
+
+    private static var documents: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+    }
+
+    /// Test automatique : dépose la vidéo créée et un compte rendu là où le script de test les récupère.
+    static func exportFinished(url: URL, report: String) {
+        guard isEnabled, screen == "export" else { return }
+        let copy = documents.appendingPathComponent("export.mp4")
+        try? FileManager.default.removeItem(at: copy)
+        try? FileManager.default.copyItem(at: url, to: copy)
+        try? "OK \(report)\n".write(to: documents.appendingPathComponent("export-done.txt"),
+                                   atomically: true, encoding: .utf8)
+    }
+
+    static func exportFailed(_ error: Error) {
+        guard isEnabled, screen == "export" else { return }
+        try? "ERREUR \(error.localizedDescription)\n".write(to: documents.appendingPathComponent("export-done.txt"),
+                                                         atomically: true, encoding: .utf8)
+    }
 
     @MainActor
     static func seedIfNeeded(_ context: ModelContext) {
@@ -38,8 +60,11 @@ enum DemoData {
         ]
 
         for (i, spec) in specs.enumerated() {
-            let run = makeRun(start: spec.0, title: spec.1, distance: spec.2,
-                              pace: spec.3, relief: spec.4, seed: Double(i))
+            let high = isHighAltitude && i == 0
+            let run = makeRun(start: spec.0, title: spec.1, distance: high ? 4000 : spec.2,
+                              pace: spec.3, relief: high ? 0.1 : spec.4, seed: Double(i),
+                              center: isHighAltitude ? (46.383, 7.515) : (45.8890, 6.1650),
+                              baseAltitude: isHighAltitude ? 2720 : 450)
             if i == 0 {
                 run.notes = "Bonnes jambes, un peu de vent au bord du lac. La montée du 6e km pique !"
             }
@@ -48,11 +73,12 @@ enum DemoData {
         try? context.save()
     }
 
-    /// Fabrique une boucle réaliste autour du lac d'Annecy.
+    /// Fabrique une boucle inventée (par défaut autour du lac d'Annecy).
     private static func makeRun(start: Date, title: String, distance: Double,
-                                pace: Double, relief: Double, seed: Double) -> Run {
-        let centerLat = 45.8890 + 0.004 * sin(seed)
-        let centerLon = 6.1650 + 0.004 * cos(seed)
+                                pace: Double, relief: Double, seed: Double,
+                                center: (Double, Double), baseAltitude: Double) -> Run {
+        let centerLat = center.0 + 0.004 * sin(seed)
+        let centerLon = center.1 + 0.004 * cos(seed)
         let radius = distance / (2 * .pi)                  // m
         let mPerDegLat = 111_320.0
         let mPerDegLon = 111_320.0 * cos(centerLat * .pi / 180)
@@ -65,7 +91,7 @@ enum DemoData {
             return (centerLat + y / mPerDegLat, centerLon + x / mPerDegLon)
         }
         func altitude(_ t: Double) -> Double {
-            450 + relief * (45 * (1 - cos(t)) + 12 * sin(3 * t + seed) + 4 * sin(11 * t))
+            baseAltitude + relief * (45 * (1 - cos(t)) + 12 * sin(3 * t + seed) + 4 * sin(11 * t))
         }
 
         // Échantillonnage fin pour mesurer la longueur réelle de la boucle
@@ -134,6 +160,7 @@ enum DemoData {
         return Run(startDate: start, title: title, distance: distance,
                    movingTime: totalTime, elapsedTime: totalTime + 95,
                    elevationGain: elevationGain,
+                   steps: Int(totalTime / 60 * (171 + 4 * sin(seed * 1.7))),
                    pointsData: (try? encoder.encode(points)) ?? Data(),
                    splitsData: (try? encoder.encode(splits)) ?? Data(),
                    bestEffortsData: (try? encoder.encode(efforts)) ?? Data())

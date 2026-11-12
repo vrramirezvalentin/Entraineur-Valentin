@@ -199,6 +199,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Valentin Entraîneur utilise ta position pour enregistrer le tracé et la distance de tes courses, même écran verrouillé.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Valentin Entraîneur utilise ta position pour enregistrer le tracé et la distance de tes courses.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Valentin Entraîneur compte tes pas et mesure ta cadence pendant tes courses.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Valentin Entraîneur enregistre les vidéos de tes parcours dans Photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -232,6 +233,7 @@
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Valentin Entraîneur utilise ta position pour enregistrer le tracé et la distance de tes courses, même écran verrouillé.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Valentin Entraîneur utilise ta position pour enregistrer le tracé et la distance de tes courses.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Valentin Entraîneur compte tes pas et mesure ta cadence pendant tes courses.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Valentin Entraîneur enregistre les vidéos de tes parcours dans Photos.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

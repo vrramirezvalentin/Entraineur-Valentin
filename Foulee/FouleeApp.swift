@@ -25,6 +25,8 @@ struct ContentView: View {
     @State private var tab: Tab = .record
     @State private var demoRun: Run?
     @State private var demoFlyover: Run?
+    @State private var demoFlyoverStart: FlyoverView.Start = .play
+    @State private var showRecovered = false
     @Environment(\.modelContext) private var context
     @Environment(RunTracker.self) private var tracker
 
@@ -47,9 +49,20 @@ struct ContentView: View {
                 .tag(Tab.stats)
         }
         .fullScreenCover(item: $demoFlyover) { run in
-            FlyoverView(run: run)
+            FlyoverView(run: run, start: demoFlyoverStart)
         }
-        .task { await setUpDemo() }
+        .alert("Course récupérée", isPresented: $showRecovered) {
+            Button("Voir l'historique") { tab = .history }
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("L'appli s'était fermée pendant ta dernière course. Ce qui avait été enregistré a été sauvegardé dans l'historique.")
+        }
+        .task {
+            if tracker.recoverInterruptedRun(in: context) != nil {
+                showRecovered = true
+            }
+            await setUpDemo()
+        }
     }
 
     /// Mode démo pour les captures dans le simulateur (builds Debug uniquement).
@@ -71,6 +84,12 @@ struct ContentView: View {
         case "stats":
             tab = .stats
         case "flyover":
+            demoFlyover = latest
+        case "flyoverStill":
+            demoFlyoverStart = .still
+            demoFlyover = latest
+        case "export":
+            demoFlyoverStart = .export
             demoFlyover = latest
         case "running":
             tab = .record

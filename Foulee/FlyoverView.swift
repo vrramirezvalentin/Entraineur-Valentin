@@ -1,159 +1,226 @@
 import SwiftUI
 import MapKit
-import Charts
-import ReplayKit
-import AVKit
-import Photos
 import UIKit
 
-// MARK: - Données du parcours pour l'animation
+// MARK: - Modèle du survol
 
-/// Version allégée du tracé (≤ 800 points) avec le dénivelé cumulé, pour animer en fluidité.
-struct FlyoverRoute {
-    let points: [TrackPoint]
-    let gains: [Double]
-    let total: Double
-    let minAlt: Double
-    let maxAlt: Double
+/// Cadence l'animation en direct sur le rafraîchissement de l'écran.
+@MainActor
+final class DisplayTicker: NSObject {
+    var onTick: (@MainActor () -> Void)?
 
-    init(points raw: [TrackPoint]) {
-        let step = max(1, raw.count / 800)
-        var pts = stride(from: 0, to: raw.count, by: step).map { raw[$0] }
-        if let last = raw.last, pts.last?.time != last.time { pts.append(last) }
-        points = pts
-
-        var g: [Double] = []
-        var total = 0.0
-        var anchor = pts.first?.alt ?? 0
-        for p in pts {
-            let diff = p.alt - anchor
-            if diff >= 3 { total += diff; anchor = p.alt } else if diff <= -3 { anchor = p.alt }
-            g.append(total)
-        }
-        gains = g
-        self.total = pts.last?.distance ?? 0
-        minAlt = pts.map(\.alt).min() ?? 0
-        maxAlt = pts.map(\.alt).max() ?? 0
-    }
-
-    struct Sample {
-        var coordinate: CLLocationCoordinate2D
-        var altitude: Double
-        var distance: Double
-        var movingTime: Double
-        var gain: Double
-        var index: Int
-    }
-
-    /// Position interpolée à `s` mètres du départ.
-    func sample(atDistance s: Double) -> Sample {
-        guard !points.isEmpty else {
-            return Sample(coordinate: .init(), altitude: 0, distance: 0, movingTime: 0, gain: 0, index: 0)
-        }
-        let target = min(max(0, s), total)
-        var lo = 0, hi = points.count - 1
-        while lo < hi {
-            let mid = (lo + hi + 1) / 2
-            if points[mid].distance <= target { lo = mid } else { hi = mid - 1 }
-        }
-        let a = points[lo]
-        guard lo + 1 < points.count else {
-            return Sample(coordinate: a.coordinate, altitude: a.alt, distance: a.distance,
-                          movingTime: a.movingTime, gain: gains[lo], index: lo)
-        }
-        let b = points[lo + 1]
-        let span = b.distance - a.distance
-        let t = span > 0 ? (target - a.distance) / span : 0
-        return Sample(coordinate: CLLocationCoordinate2D(latitude: a.lat + (b.lat - a.lat) * t,
-                                                         longitude: a.lon + (b.lon - a.lon) * t),
-                      altitude: a.alt + (b.alt - a.alt) * t,
-                      distance: target,
-                      movingTime: a.movingTime + (b.movingTime - a.movingTime) * t,
-                      gain: gains[lo],
-                      index: lo)
-    }
-
-    /// Caméra vue d'ensemble, inclinée, cadrant tout le parcours.
-    var overviewCamera: MapCamera {
-        let lats = points.map(\.lat), lons = points.map(\.lon)
-        let minLat = lats.min() ?? 0, maxLat = lats.max() ?? 0
-        let minLon = lons.min() ?? 0, maxLon = lons.max() ?? 0
-        let center = CLLocationCoordinate2D(latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2)
-        let diag = CLLocation(latitude: minLat, longitude: minLon)
-            .distance(from: CLLocation(latitude: maxLat, longitude: maxLon))
-        return MapCamera(centerCoordinate: center, distance: max(2500, diag * 3.6), heading: 0, pitch: 45)
-    }
-
-    /// Distance de la caméra en mode suivi, adaptée à la longueur du parcours.
-    var followDistance: Double { min(4500, max(1800, total * 0.35)) }
-
-    /// Durée de la phase de suivi : ~12 s pour 1 km, 35 s max.
-    var playDuration: Double { min(35, max(12, 10 + total / 1000 * 1.5)) }
-}
-
-enum Geo {
-    static func bearing(_ a: CLLocationCoordinate2D, _ b: CLLocationCoordinate2D) -> Double {
-        let lat1 = a.latitude * .pi / 180, lat2 = b.latitude * .pi / 180
-        let dLon = (b.longitude - a.longitude) * .pi / 180
-        let y = sin(dLon) * cos(lat2)
-        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
-        return (atan2(y, x) * 180 / .pi + 360).truncatingRemainder(dividingBy: 360)
-    }
-
-    static func lerpAngle(_ a: Double, _ b: Double, _ t: Double) -> Double {
-        var d = (b - a).truncatingRemainder(dividingBy: 360)
-        if d > 180 { d -= 360 } else if d < -180 { d += 360 }
-        return (a + d * t + 360).truncatingRemainder(dividingBy: 360)
+    @objc func tick() {
+        onTick?()
     }
 }
 
-// MARK: - Écran de survol 3D
+@MainActor
+@Observable
+final class FlyoverModel {
+    let title: String
+    let date: Date
+    let route: FlyoverRoute
+    let timeline: FlyoverTimeline
+    let map = FlyoverMapController()
 
-struct FlyoverView: View {
-    let run: Run
-    @Environment(\.dismiss) private var dismiss
+    /// Où en est le point (distance, temps, altitude…), pour l'habillage
+    private(set) var sample = FlyoverRoute.Sample()
+    private(set) var isPlaying = false
+    private(set) var isExporting = false
+    private(set) var exportProgress = 0.0
+    private(set) var satellite = true
 
-    @State private var route: FlyoverRoute
-    @State private var camera: MapCameraPosition
-    @State private var distance: Double = 0
-    @State private var heading: Double = 0
-    @State private var isPlaying = false
-    @State private var isRecording = false
-    @State private var satellite = true
-    @State private var task: Task<Void, Never>?
-    @State private var video: VideoItem?
-    @State private var errorMessage: String?
+    /// Vue capturée pour la vidéo (carte + habillage, sans les boutons)
+    @ObservationIgnored weak var captureView: UIView?
+    /// Compte rendu de la dernière création de vidéo (durée, images…)
+    @ObservationIgnored private(set) var exportReport = ""
+
+    @ObservationIgnored private var link: CADisplayLink?
+    @ObservationIgnored private var ticker = DisplayTicker()
+    @ObservationIgnored private var playStart: CFTimeInterval = 0
+    @ObservationIgnored private var trustBusyFlag = true
+    @ObservationIgnored private var busyTimeouts = 0
 
     init(run: Run) {
-        self.run = run
-        let r = FlyoverRoute(points: run.points)
-        _route = State(initialValue: r)
-        _camera = State(initialValue: .camera(r.overviewCamera))
+        let prepared = FlyoverRoute(points: run.points)
+        title = run.title
+        date = run.startDate
+        route = prepared
+        timeline = FlyoverTimeline(play: prepared.playDuration)
+        map.configure()
+        map.load(prepared)
+        sample = prepared.sample(atDistance: 0)
     }
 
-    private var current: FlyoverRoute.Sample { route.sample(atDistance: distance) }
+    /// Affiche le survol à l'instant `time` (en secondes depuis le début).
+    func apply(time: Double) {
+        let state = timeline.state(at: time, route: route)
+        let position = route.sample(atDistance: state.distance)
+        map.show(camera: state.camera, runnerAt: position.coordinate, stroke: position.stroke)
+        if position != sample { sample = position }
+    }
+
+    func toggleSatellite() {
+        satellite.toggle()
+        map.setSatellite(satellite)
+    }
+
+    // MARK: Lecture en direct
+
+    func play() {
+        guard !isExporting, route.points.count > 1 else { return }
+        stopLink()
+        isPlaying = true
+        map.mapView.isUserInteractionEnabled = false
+        UIApplication.shared.isIdleTimerDisabled = true
+        apply(time: 0)
+        playStart = CACurrentMediaTime()
+        ticker.onTick = { [weak self] in self?.tick() }
+        let displayLink = CADisplayLink(target: ticker, selector: #selector(DisplayTicker.tick))
+        displayLink.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 60, preferred: 60)
+        displayLink.add(to: .main, forMode: .common)
+        link = displayLink
+    }
+
+    /// Arrête la lecture (la carte redevient manipulable au doigt).
+    func stop() {
+        stopLink()
+        if !isExporting {
+            map.mapView.isUserInteractionEnabled = true
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+    }
+
+    private func tick() {
+        let elapsed = CACurrentMediaTime() - playStart
+        apply(time: elapsed)
+        if elapsed >= timeline.duration { stop() }
+    }
+
+    private func stopLink() {
+        link?.invalidate()
+        link = nil
+        ticker.onTick = nil
+        isPlaying = false
+    }
+
+    // MARK: Création de la vidéo
+
+    /// Fabrique la vidéo image par image et renvoie le fichier MP4.
+    func exportVideo() async throws -> URL {
+        guard let view = captureView, route.points.count > 1 else { throw VideoExportError.noView }
+        stopLink()
+        isExporting = true
+        exportProgress = 0
+        map.mapView.isUserInteractionEnabled = false
+        UIApplication.shared.isIdleTimerDisabled = true
+        defer {
+            isExporting = false
+            map.mapView.isUserInteractionEnabled = true
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
+
+        let fps = 30
+        let frames = Int((timeline.duration * Double(fps)).rounded(.up)) + 1
+        let began = CACurrentMediaTime()
+        trustBusyFlag = true
+        busyTimeouts = 0
+        var totalTimeouts = 0
+
+        // La vue d'ensemble doit être nette avant la première image.
+        apply(time: 0)
+        _ = await settle(minimumTicks: 30, timeout: 8)
+
+        let unsafe = CharacterSet(charactersIn: "/\\:?%*|\"<>")
+        let safeTitle = title.components(separatedBy: unsafe).joined()
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("Valentin Entraineur - \(safeTitle.isEmpty ? "course" : safeTitle).mp4")
+        let writer = try FrameVideoWriter(view: view, fps: fps, url: url)
+
+        do {
+            for frame in 0..<frames {
+                try Task.checkCancellation()
+                // Rien ne peut être capturé quand l'appli est en arrière-plan : on attend son retour.
+                while UIApplication.shared.applicationState != .active {
+                    try await Task.sleep(for: .milliseconds(300))
+                }
+                apply(time: Double(frame) / Double(fps))
+                if await settle(minimumTicks: 2, timeout: 1.5) { totalTimeouts += 1 }
+                try await writer.append(view)
+                exportProgress = Double(frame + 1) / Double(frames)
+            }
+            try await writer.finish()
+        } catch {
+            writer.cancel()
+            throw error
+        }
+
+        let seconds = CACurrentMediaTime() - began
+        exportReport = "images=\(frames) fps=\(fps) taille=\(writer.pixelWidth)x\(writer.pixelHeight) "
+            + "duree=\(String(format: "%.1f", seconds))s par_image=\(String(format: "%.0f", seconds / Double(frames) * 1000))ms "
+            + "attentes_depassees=\(totalTimeouts) drapeau_fiable=\(trustBusyFlag)"
+        return url
+    }
+
+    /// Laisse la carte dessiner la nouvelle image. Renvoie vrai si on a renoncé à attendre.
+    private func settle(minimumTicks: Int, timeout: Double) async -> Bool {
+        for _ in 0..<minimumTicks {
+            try? await Task.sleep(for: .milliseconds(16))
+        }
+        guard trustBusyFlag else { return false }
+        let began = CACurrentMediaTime()
+        while map.isBusy {
+            if Task.isCancelled { return false }
+            if CACurrentMediaTime() - began > timeout {
+                // Si la carte ne signale jamais la fin de son dessin, on arrête de lui faire confiance.
+                busyTimeouts += 1
+                if busyTimeouts >= 6 { trustBusyFlag = false }
+                return true
+            }
+            try? await Task.sleep(for: .milliseconds(16))
+        }
+        busyTimeouts = 0
+        return false
+    }
+}
+
+// MARK: - Écran
+
+struct FlyoverView: View {
+    enum Start { case play, still, export }
+
+    let run: Run
+    let start: Start
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var model: FlyoverModel? = nil
+    @State private var exportTask: Task<Void, Never>? = nil
+    @State private var video: VideoItem? = nil
+    @State private var errorMessage: String? = nil
+
+    init(run: Run, start: Start = .play) {
+        self.run = run
+        self.start = start
+    }
 
     var body: some View {
-        let sample = current
         ZStack {
-            map(sample)
-                .ignoresSafeArea()
-
-            VStack(spacing: 0) {
-                header(sample)
-                Spacer()
-                profile(sample)
-                if !isRecording { controls }
+            Color.black.ignoresSafeArea()
+            if let model {
+                CaptureHost(model: model) { FlyoverCanvas(model: model) }
+                    .ignoresSafeArea()
+                chrome(model)
+            } else {
+                ProgressView()
+                    .tint(.white)
             }
-            .padding(.horizontal, 14)
-            .padding(.bottom, isRecording ? 30 : 8)
         }
         .statusBarHidden()
         .persistentSystemOverlays(.hidden)
-        .onAppear { play(recording: false) }
+        .task { await begin() }
         .onDisappear {
-            task?.cancel()
-            UIApplication.shared.isIdleTimerDisabled = false
+            exportTask?.cancel()
+            model?.stop()
         }
         .sheet(item: $video) { item in
             VideoResultView(url: item.url)
@@ -166,125 +233,100 @@ struct FlyoverView: View {
         }
     }
 
-    // MARK: Carte
-
-    private func map(_ sample: FlyoverRoute.Sample) -> some View {
-        let all = route.points.map(\.coordinate)
-        let traveled = Array(all.prefix(sample.index + 1)) + [sample.coordinate]
-        return Map(position: $camera,
-                   interactionModes: isPlaying ? MapInteractionModes() : .all) {
-            MapPolyline(coordinates: all)
-                .stroke(Color.white.opacity(0.55), style: StrokeStyle(lineWidth: 4, lineCap: .round, lineJoin: .round))
-            MapPolyline(coordinates: traveled)
-                .stroke(Color.orange, style: StrokeStyle(lineWidth: 7, lineCap: .round, lineJoin: .round))
-            Annotation("", coordinate: sample.coordinate, anchor: .center) {
-                ZStack {
-                    Circle().fill(Color.orange.opacity(0.3)).frame(width: 38, height: 38)
-                    Circle().fill(.white).frame(width: 20, height: 20)
-                    Circle().fill(Color.orange).frame(width: 13, height: 13)
-                }
-                .shadow(radius: 4)
-            }
-            .annotationTitles(.hidden)
+    private func begin() async {
+        guard model == nil else { return }
+        let created = FlyoverModel(run: run)
+        model = created
+        // Le temps que la carte prenne place à l'écran
+        try? await Task.sleep(for: .milliseconds(500))
+        guard !Task.isCancelled else { return }
+        switch start {
+        case .play: created.play()
+        case .still: created.apply(time: created.timeline.midpoint)
+        case .export: startExport(created)
         }
-        .mapStyle(satellite ? .imagery(elevation: .realistic) : .standard(elevation: .realistic))
-        .mapControlVisibility(.hidden)
     }
 
-    // MARK: Habillage
+    private func startExport(_ model: FlyoverModel) {
+        exportTask?.cancel()
+        exportTask = Task {
+            do {
+                let url = try await model.exportVideo()
+                #if DEBUG
+                DemoData.exportFinished(url: url, report: model.exportReport)
+                #endif
+                video = VideoItem(url: url)
+            } catch is CancellationError {
+                // Annulé par l'utilisateur
+            } catch {
+                #if DEBUG
+                DemoData.exportFailed(error)
+                #endif
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
 
-    private func header(_ s: FlyoverRoute.Sample) -> some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(run.title).font(.title3.bold())
-                    Text(run.startDate.formatted(date: .long, time: .omitted))
-                        .font(.caption).foregroundStyle(.secondary)
-                }
+    // MARK: Boutons (jamais dans la vidéo)
+
+    private func chrome(_ model: FlyoverModel) -> some View {
+        VStack(spacing: 0) {
+            HStack {
                 Spacer()
-                if !isRecording {
-                    Button { dismiss() } label: {
+                if !model.isExporting {
+                    Button {
+                        dismiss()
+                    } label: {
                         Image(systemName: "xmark")
                             .font(.headline)
                             .frame(width: 36, height: 36)
-                            .background(.thinMaterial, in: Circle())
+                            .background(Color(.tertiarySystemFill), in: Circle())
                     }
                     .tint(.primary)
-                } else {
-                    Label("Valentin Entraîneur", systemImage: "figure.run")
-                        .font(.caption.bold())
-                        .foregroundStyle(.orange)
+                    .accessibilityLabel("Fermer")
                 }
             }
-            HStack {
-                OverlayStat(title: "Distance", value: Fmt.km(s.distance), unit: "km")
-                OverlayStat(title: "Temps", value: Fmt.duration(s.movingTime), unit: nil)
-                OverlayStat(title: "Altitude", value: "\(Int(s.altitude.rounded()))", unit: "m")
-                OverlayStat(title: "D+", value: "\(Int(s.gain.rounded()))", unit: "m")
+            .frame(height: 36)
+            .padding(.top, 20)
+            .padding(.trailing, 28)
+
+            Spacer()
+
+            if model.isExporting {
+                exportPanel(model)
+            } else {
+                controls(model)
             }
         }
-        .padding(16)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-        .padding(.top, 8)
+        .padding(.bottom, 8)
     }
 
-    private func profile(_ s: FlyoverRoute.Sample) -> some View {
-        let step = max(1, route.points.count / 200)
-        let sampled = stride(from: 0, to: route.points.count, by: step).map { route.points[$0] }
-        let low = route.minAlt - 5, high = route.maxAlt + 5
-        return Chart {
-            ForEach(Array(sampled.enumerated()), id: \.offset) { _, p in
-                AreaMark(x: .value("Distance", p.distance / 1000),
-                         yStart: .value("Base", low),
-                         yEnd: .value("Altitude", p.alt))
-                    .foregroundStyle(Color.orange.opacity(0.3))
-                LineMark(x: .value("Distance", p.distance / 1000),
-                         y: .value("Altitude", p.alt))
-                    .foregroundStyle(Color.orange)
-            }
-            RuleMark(x: .value("Position", s.distance / 1000))
-                .foregroundStyle(Color.primary.opacity(0.4))
-            PointMark(x: .value("Position", s.distance / 1000),
-                      y: .value("Altitude", s.altitude))
-                .foregroundStyle(Color.orange)
-                .symbolSize(90)
-        }
-        .chartYScale(domain: low...max(high, low + 20))
-        .chartXScale(domain: 0...max(0.1, route.total / 1000))
-        .chartXAxis(.hidden)
-        .chartYAxis(.hidden)
-        .frame(height: 70)
-        .padding(12)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .padding(.bottom, 10)
-    }
-
-    private var controls: some View {
+    private func controls(_ model: FlyoverModel) -> some View {
         HStack(spacing: 10) {
             Button {
-                satellite.toggle()
+                model.toggleSatellite()
             } label: {
-                Image(systemName: satellite ? "map" : "globe.europe.africa.fill")
+                Image(systemName: model.satellite ? "map" : "globe.europe.africa.fill")
                     .font(.title3)
                     .frame(width: 52, height: 52)
                     .background(.regularMaterial, in: Circle())
             }
             .tint(.primary)
-            .disabled(isPlaying)
+            .accessibilityLabel(model.satellite ? "Afficher le plan" : "Afficher la vue satellite")
 
             Button {
-                play(recording: false)
+                model.play()
             } label: {
-                Label(isPlaying ? "Lecture…" : "Rejouer", systemImage: "arrow.counterclockwise")
+                Label(model.isPlaying ? "Lecture…" : "Rejouer", systemImage: "arrow.counterclockwise")
                     .font(.headline)
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background(.regularMaterial, in: Capsule())
             }
             .tint(.primary)
-            .disabled(isPlaying)
+            .disabled(model.isPlaying)
 
             Button {
-                play(recording: true)
+                startExport(model)
             } label: {
                 Label("Créer la vidéo", systemImage: "video.fill")
                     .font(.headline)
@@ -292,92 +334,122 @@ struct FlyoverView: View {
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color.orange, in: Capsule())
             }
-            .disabled(isPlaying)
         }
+        .padding(.horizontal, 14)
     }
 
-    // MARK: Animation
-
-    private func play(recording: Bool) {
-        guard route.points.count > 1 else { return }
-        task?.cancel()
-        task = Task { @MainActor in
-            isPlaying = true
-            UIApplication.shared.isIdleTimerDisabled = true
-            defer {
-                isPlaying = false
-                UIApplication.shared.isIdleTimerDisabled = false
+    private func exportPanel(_ model: FlyoverModel) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Création de la vidéo… \(Int(model.exportProgress * 100)) %")
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
+                Spacer()
+                Button("Annuler") { exportTask?.cancel() }
+                    .font(.subheadline.weight(.semibold))
             }
+            ProgressView(value: model.exportProgress)
+                .tint(.orange)
+            Text("Garde l'appli ouverte : chaque image est dessinée une à une pour une vidéo bien fluide.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(16)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .padding(.horizontal, 14)
+    }
+}
 
-            distance = 0
-            withAnimation(.easeInOut(duration: 1)) { camera = .camera(route.overviewCamera) }
+// MARK: - Ce qui apparaît dans la vidéo
 
-            if recording {
-                isRecording = true
-                guard await Recorder.start() else {
-                    isRecording = false
-                    errorMessage = "L'enregistrement de l'écran a été refusé ou n'est pas disponible."
-                    return
+/// Héberge la carte et son habillage dans une vue UIKit, pour pouvoir la capturer image par image.
+struct CaptureHost<Content: View>: UIViewControllerRepresentable {
+    let model: FlyoverModel
+    @ViewBuilder let content: () -> Content
+
+    func makeUIViewController(context: Context) -> UIHostingController<Content> {
+        let host = UIHostingController(rootView: content())
+        host.view.backgroundColor = .black
+        model.captureView = host.view
+        return host
+    }
+
+    func updateUIViewController(_ host: UIHostingController<Content>, context: Context) {}
+}
+
+struct FlyoverCanvas: View {
+    let model: FlyoverModel
+
+    var body: some View {
+        ZStack {
+            FlyoverMapView(controller: model.map)
+                .ignoresSafeArea()
+            VStack(spacing: 0) {
+                FlyoverHeader(model: model)
+                Spacer(minLength: 0)
+                FlyoverProfile(model: model)
+            }
+            .padding(.horizontal, 14)
+            .padding(.top, 8)
+            // Hors vidéo, on laisse la place des boutons sous le profil.
+            .padding(.bottom, model.isExporting ? 8 : 70)
+        }
+        .tint(.orange)
+    }
+}
+
+private struct FlyoverPanel: ViewModifier {
+    let radius: CGFloat
+
+    func body(content: Content) -> some View {
+        content.background(Color(.systemBackground).opacity(0.88),
+                           in: RoundedRectangle(cornerRadius: radius, style: .continuous))
+    }
+}
+
+struct FlyoverHeader: View {
+    let model: FlyoverModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(model.title)
+                        .font(.title3.bold())
+                        .lineLimit(2)
+                    Text(model.date.formatted(date: .long, time: .omitted))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                if model.isExporting {
+                    Label("Valentin Entraîneur", systemImage: "figure.run")
+                        .font(.caption.bold())
+                        .foregroundStyle(.orange)
+                } else {
+                    // Place du bouton Fermer, posé par-dessus
+                    Color.clear.frame(width: 36, height: 36)
                 }
             }
-
-            // 1. Vue d'ensemble, le temps que le relief se charge
-            try? await Task.sleep(for: .seconds(2.5))
-            if Task.isCancelled { return await abort(recording) }
-
-            // 2. Plongée vers le départ
-            let start = route.sample(atDistance: 0)
-            let ahead = route.sample(atDistance: lookAhead)
-            heading = Geo.bearing(start.coordinate, ahead.coordinate)
-            withAnimation(.easeInOut(duration: 2)) {
-                camera = .camera(followCamera(start.coordinate))
-            }
-            try? await Task.sleep(for: .seconds(2.2))
-            if Task.isCancelled { return await abort(recording) }
-
-            // 3. Suivi du point le long du tracé
-            let begin = Date()
-            let duration = route.playDuration
-            while !Task.isCancelled {
-                let p = min(1, Date().timeIntervalSince(begin) / duration)
-                let eased = p < 0.5 ? 2 * p * p : 1 - pow(-2 * p + 2, 2) / 2   // départ et arrivée en douceur
-                distance = route.total * (0.15 * p + 0.85 * eased)
-                let here = route.sample(atDistance: distance)
-                let target = route.sample(atDistance: distance + lookAhead)
-                heading = Geo.lerpAngle(heading, Geo.bearing(here.coordinate, target.coordinate), 0.05)
-                camera = .camera(followCamera(here.coordinate))
-                if p >= 1 { break }
-                try? await Task.sleep(for: .milliseconds(33))
-            }
-            if Task.isCancelled { return await abort(recording) }
-
-            // 4. Retour à la vue d'ensemble
-            withAnimation(.easeInOut(duration: 2.5)) { camera = .camera(route.overviewCamera) }
-            try? await Task.sleep(for: .seconds(3))
-
-            if recording {
-                isRecording = false
-                do {
-                    let url = try await Recorder.stop(name: run.title)
-                    video = VideoItem(url: url)
-                } catch {
-                    errorMessage = "La vidéo n'a pas pu être enregistrée."
-                }
-            }
+            FlyoverStats(model: model)
         }
+        .padding(16)
+        .modifier(FlyoverPanel(radius: 22))
     }
+}
 
-    private func abort(_ recording: Bool) async {
-        if recording {
-            isRecording = false
-            _ = try? await Recorder.stop(name: "annule")
+/// Les chiffres qui défilent pendant le survol.
+struct FlyoverStats: View {
+    let model: FlyoverModel
+
+    var body: some View {
+        let s = model.sample
+        HStack {
+            OverlayStat(title: "Distance", value: Fmt.km(s.distance), unit: "km")
+            OverlayStat(title: "Temps", value: Fmt.duration(s.movingTime), unit: nil)
+            OverlayStat(title: "Altitude", value: "\(Int(s.altitude.rounded()))", unit: "m")
+            OverlayStat(title: "D+", value: "\(Int(s.gain.rounded()))", unit: "m")
         }
-    }
-
-    private var lookAhead: Double { max(250, route.total * 0.05) }
-
-    private func followCamera(_ c: CLLocationCoordinate2D) -> MapCamera {
-        MapCamera(centerCoordinate: c, distance: route.followDistance, heading: heading, pitch: 60)
     }
 }
 
@@ -388,121 +460,83 @@ private struct OverlayStat: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 1) {
-            Text(title).font(.caption2.weight(.semibold)).foregroundStyle(.secondary)
+            Text(title)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(.secondary)
             HStack(alignment: .firstTextBaseline, spacing: 2) {
-                Text(value).font(.system(.headline, design: .rounded).weight(.bold)).monospacedDigit()
-                if let unit { Text(unit).font(.caption2).foregroundStyle(.secondary) }
+                Text(value)
+                    .font(.system(.headline, design: .rounded).weight(.bold))
+                    .monospacedDigit()
+                if let unit {
+                    Text(unit)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
-// MARK: - Enregistrement vidéo (ReplayKit)
-
-enum Recorder {
-    static func start() async -> Bool {
-        let recorder = RPScreenRecorder.shared()
-        guard recorder.isAvailable else { return false }
-        recorder.isMicrophoneEnabled = false
-        return await withCheckedContinuation { cont in
-            recorder.startRecording { error in
-                cont.resume(returning: error == nil)
-            }
-        }
-    }
-
-    static func stop(name: String) async throws -> URL {
-        let unsafe = CharacterSet(charactersIn: "/\\:?%*|\"<>")
-        let safe = name.components(separatedBy: unsafe).joined()
-        let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("Valentin Entraineur - \(safe.isEmpty ? "course" : safe).mp4")
-        try? FileManager.default.removeItem(at: url)
-        return try await withCheckedThrowingContinuation { cont in
-            RPScreenRecorder.shared().stopRecording(withOutput: url) { error in
-                if let error { cont.resume(throwing: error) } else { cont.resume(returning: url) }
-            }
-        }
-    }
-}
-
-struct VideoItem: Identifiable {
-    let url: URL
-    var id: URL { url }
-}
-
-// MARK: - Aperçu et export de la vidéo
-
-struct VideoResultView: View {
-    let url: URL
-    @Environment(\.dismiss) private var dismiss
-    @State private var player: AVPlayer
-    @State private var saved = false
-    @State private var saveError = false
-
-    init(url: URL) {
-        self.url = url
-        _player = State(initialValue: AVPlayer(url: url))
-    }
+/// Profil d'altitude, avec un curseur qui suit le point.
+struct FlyoverProfile: View {
+    let model: FlyoverModel
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 16) {
-                VideoPlayer(player: player)
-                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-                    .onAppear { player.play() }
+        ZStack {
+            ProfileShape(xs: model.route.profileX, ys: model.route.profileY, closed: true)
+                .fill(Color.orange.opacity(0.3))
+            ProfileShape(xs: model.route.profileX, ys: model.route.profileY, closed: false)
+                .stroke(Color.orange, style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
+            ProfileCursor(model: model)
+        }
+        .frame(height: 64)
+        .padding(12)
+        .modifier(FlyoverPanel(radius: 18))
+    }
+}
 
-                HStack(spacing: 12) {
-                    Button {
-                        saveToPhotos()
-                    } label: {
-                        Label(saved ? "Enregistrée" : "Dans Photos",
-                              systemImage: saved ? "checkmark" : "square.and.arrow.down")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, minHeight: 50)
-                    }
-                    .buttonStyle(.bordered)
-                    .buttonBorderShape(.capsule)
-                    .disabled(saved)
+private struct ProfileCursor: View {
+    let model: FlyoverModel
 
-                    ShareLink(item: url) {
-                        Label("Partager", systemImage: "square.and.arrow.up")
-                            .font(.headline)
-                            .frame(maxWidth: .infinity, minHeight: 50)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .buttonBorderShape(.capsule)
-                }
+    var body: some View {
+        GeometryReader { geo in
+            let s = model.sample
+            let width = Double(geo.size.width)
+            let height = Double(geo.size.height)
+            let x: Double = (model.route.total > 0 ? s.distance / model.route.total : 0) * width
+            let y: Double = (1 - model.route.profileHeight(of: s.altitude)) * height
+            Path { path in
+                path.move(to: CGPoint(x: x, y: 0))
+                path.addLine(to: CGPoint(x: x, y: height))
             }
-            .padding()
-            .navigationTitle("Ta vidéo")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("OK") { dismiss() }
-                }
-            }
-            .alert("Accès à Photos refusé", isPresented: $saveError) {
-                Button("OK", role: .cancel) {}
-            } message: {
-                Text("Autorise Valentin Entraîneur à ajouter des photos dans Réglages, ou utilise Partager.")
-            }
+            .stroke(Color.primary.opacity(0.4), lineWidth: 1)
+            Circle()
+                .fill(Color.orange)
+                .frame(width: 10, height: 10)
+                .position(x: CGFloat(x), y: CGFloat(y))
         }
     }
+}
 
-    private func saveToPhotos() {
-        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-            guard status == .authorized || status == .limited else {
-                DispatchQueue.main.async { saveError = true }
-                return
-            }
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
-            }) { ok, _ in
-                DispatchQueue.main.async {
-                    if ok { saved = true } else { saveError = true }
-                }
-            }
+private struct ProfileShape: Shape {
+    let xs: [Double]
+    let ys: [Double]
+    let closed: Bool
+
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        guard xs.count > 1, xs.count == ys.count else { return path }
+        for i in xs.indices {
+            let point = CGPoint(x: rect.minX + CGFloat(xs[i]) * rect.width,
+                                y: rect.maxY - CGFloat(ys[i]) * rect.height)
+            if i == 0 { path.move(to: point) } else { path.addLine(to: point) }
         }
+        if closed {
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.closeSubpath()
+        }
+        return path
     }
 }
