@@ -24,8 +24,7 @@ struct ContentView: View {
 
     @State private var tab: Tab = .record
     @State private var demoRun: Run?
-    @State private var demoFlyover: Run?
-    @State private var demoFlyoverStart: FlyoverView.Start = .play
+    @State private var demoFlyover: DemoFlyover?
     @State private var showRecovered = false
     @Environment(\.modelContext) private var context
     @Environment(RunTracker.self) private var tracker
@@ -48,8 +47,8 @@ struct ContentView: View {
                 .tabItem { Label("Stats", systemImage: "chart.bar.fill") }
                 .tag(Tab.stats)
         }
-        .fullScreenCover(item: $demoFlyover) { run in
-            FlyoverView(run: run, start: demoFlyoverStart)
+        .fullScreenCover(item: $demoFlyover) { item in
+            FlyoverView(run: item.run, start: item.start)
         }
         .alert("Course récupérée", isPresented: $showRecovered) {
             Button("Voir l'historique") { tab = .history }
@@ -84,13 +83,11 @@ struct ContentView: View {
         case "stats":
             tab = .stats
         case "flyover":
-            demoFlyover = latest
+            demoFlyover = latest.map { DemoFlyover(run: $0, start: .play) }
         case "flyoverStill":
-            demoFlyoverStart = .still
-            demoFlyover = latest
+            demoFlyover = latest.map { DemoFlyover(run: $0, start: .still) }
         case "export":
-            demoFlyoverStart = .export
-            demoFlyover = latest
+            demoFlyover = latest.map { DemoFlyover(run: $0, start: .export) }
         case "running":
             tab = .record
             try? await Task.sleep(for: .seconds(4))
@@ -100,4 +97,11 @@ struct ContentView: View {
         }
         #endif
     }
+}
+
+/// Survol ouvert automatiquement en mode démo, avec la façon de le démarrer.
+struct DemoFlyover: Identifiable {
+    let run: Run
+    let start: FlyoverView.Start
+    var id: PersistentIdentifier { run.persistentModelID }
 }

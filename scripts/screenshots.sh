@@ -59,7 +59,7 @@ START=$(date +%s)
 sleep 25; shot 9-creation-video
 while [ ! -f "$DATA/Documents/export-done.txt" ]; do
   NOW=$(date +%s)
-  if [ $((NOW - START)) -gt 1500 ]; then echo "ERREUR délai dépassé" > "$OUT/export-report.txt"; break; fi
+  if [ $((NOW - START)) -gt 1200 ]; then echo "ERREUR délai dépassé" > "$OUT/export-report.txt"; break; fi
   sleep 10
 done
 if [ -f "$DATA/Documents/export-done.txt" ]; then
@@ -86,12 +86,5 @@ xcrun simctl location "$UDID" clear || true
 xcrun simctl location "$UDID" set 45.8990,6.1290 || true
 sleep 2
 launch history; sleep 7; shot 3-recuperation
-
-# --- Calibration de la caméra en altitude (glacier à 2 700 m) -----------------
-xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
-xcrun simctl uninstall "$UDID" "$BID" || true
-install_app
-launch flyoverStill -demoPlace alti -terrainComp NO;  sleep 40; shot cal-sans-compensation
-launch flyoverStill -demoPlace alti -terrainComp YES; sleep 30; shot cal-avec-compensation
 
 ls -la "$OUT" "$OUT/screens"

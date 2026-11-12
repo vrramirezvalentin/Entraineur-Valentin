@@ -111,8 +111,10 @@ final class FlyoverMapController: NSObject, MKMapViewDelegate {
         mapView.setCamera(camera.mapCamera, animated: false)
         runner?.coordinate = coordinate
 
+        // Le trait orange avance par petits pas (0,1 % du parcours) : l'écart reste caché sous le point.
         let target = CGFloat(min(1, max(0, newStroke)))
-        if target != stroke {
+        let atAnEnd = (target == 0 || target == 1) && target != stroke
+        if atAnEnd || abs(target - stroke) >= 0.001 {
             stroke = target
             if let doneRenderer {
                 doneRenderer.strokeEnd = target
