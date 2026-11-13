@@ -42,6 +42,9 @@ launch() {
 # --- Écrans principaux -------------------------------------------------------
 launch history; sleep 15            # premier lancement : création des courses de démo
 launch record;  sleep 10; shot 1-pret
+launch today;   sleep 6;  shot 0-aujourdhui
+launch today -scrollTo semaine; sleep 7; shot 0b-aujourdhui-semaine
+launch today -scrollTo jours;   sleep 7; shot 0c-aujourdhui-jours
 launch history; sleep 6;  shot 4-historique
 launch detail;  sleep 10; shot 5-detail
 launch stats;   sleep 6;  shot 6-stats
@@ -94,6 +97,8 @@ install_app
 xcrun simctl ui "$UDID" appearance dark || true
 launch history; sleep 15
 launch record;  sleep 8;  shot d1-sombre-pret
+launch today;   sleep 6;  shot d0-sombre-aujourdhui
+launch today -scrollTo semaine; sleep 7; shot d0b-sombre-aujourdhui-semaine
 launch detail;  sleep 8;  shot d2-sombre-detail
 launch stats;   sleep 5;  shot d3-sombre-stats
 launch flyover; sleep 12; shot d4-sombre-survol
@@ -109,6 +114,8 @@ xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
 launch running; sleep 40; shot g1-gros-texte-course
 xcrun simctl location "$UDID" clear || true
 launch detail;  sleep 8;  shot g2-gros-texte-detail
+launch today;   sleep 6;  shot g0-gros-texte-aujourdhui
+launch today -scrollTo semaine; sleep 7; shot g0b-gros-texte-aujourdhui-semaine
 launch history; sleep 5;  shot g3-gros-texte-historique
 launch stats;   sleep 5;  shot g4-gros-texte-stats
 launch flyover; sleep 12; shot g5-gros-texte-survol
@@ -155,11 +162,13 @@ if [ -n "$SMALL" ]; then
   launch running; sleep 40; shot p1-petit-course
   xcrun simctl location "$UDID" clear || true
   launch detail;  sleep 8;  shot p2-petit-detail
+  launch today;   sleep 6;  shot p0-petit-aujourdhui
   launch stats;   sleep 5;  shot p3-petit-stats
   launch flyover; sleep 12; shot p4-petit-survol
   xcrun simctl ui "$UDID" content_size extra-extra-large || true
   launch flyover; sleep 12; shot p5-petit-gros-texte-survol
   launch history; sleep 5;  shot p7-petit-gros-texte-historique
+  launch today;   sleep 6;  shot p8-petit-gros-texte-aujourdhui
   xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
   launch running; sleep 30; shot p6-petit-gros-texte-course
   xcrun simctl ui "$UDID" content_size large || true

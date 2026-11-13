@@ -30,6 +30,48 @@ enum DemoData {
                                                          atomically: true, encoding: .utf8)
     }
 
+    struct DemoToday {
+        var steps: Int
+        var distance: Double
+        var floorsUp: Int
+        var activeMinutes: Double
+        var hourly: [Int]
+    }
+
+    /// 60 jours de pas inventés (le simulateur n'a pas de podomètre) et une journée en cours.
+    @MainActor
+    static func seedActivity(_ context: ModelContext) -> DemoToday {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let hour = cal.component(.hour, from: Date())
+        let hourlyPattern = [0, 0, 0, 0, 0, 0, 40, 620, 1450, 380, 260, 310, 840, 520, 230, 280, 360, 690, 1180, 640, 310, 120, 30, 0]
+        var hourly = hourlyPattern.enumerated().map { $0.offset <= hour ? $0.element : 0 }
+        if hour < 24 { hourly[hour] = hourly[hour] * 2 / 3 }
+        let todaySteps = hourly.reduce(0, +)
+
+        let existing = (try? context.fetchCount(FetchDescriptor<DaySummary>())) ?? 0
+        if existing == 0 {
+            for offset in 0..<60 {
+                guard let day = cal.date(byAdding: .day, value: -offset, to: today) else { continue }
+                let summary = DaySummary(day: day)
+                let x = Double(offset)
+                let weekday = cal.component(.weekday, from: day)
+                let weekend = weekday == 1 || weekday == 7
+                var steps = 8200 + 2600 * sin(x * 1.3) + 1500 * cos(x * 0.45) + (weekend ? 2500 : 0)
+                if offset % 9 == 4 { steps += 6500 }        // jours de sortie longue
+                if offset == 0 { steps = Double(todaySteps) }
+                summary.steps = max(1200, Int(steps))
+                summary.distance = Double(summary.steps) * 0.74
+                summary.floorsUp = Int(6 + 5 * sin(x * 0.8) + (weekend ? 6 : 0))
+                summary.activeMinutes = Double(summary.steps) / 105
+                context.insert(summary)
+            }
+            try? context.save()
+        }
+        return DemoToday(steps: todaySteps, distance: Double(todaySteps) * 0.74,
+                         floorsUp: 7, activeMinutes: Double(todaySteps) / 105, hourly: hourly)
+    }
+
     @MainActor
     static func seedIfNeeded(_ context: ModelContext) {
         guard isEnabled else { return }

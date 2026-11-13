@@ -1,28 +1,61 @@
 import SwiftUI
 import SwiftData
+import BackgroundTasks
 
 @main
 struct FouleeApp: App {
+    /// Tâche de fond qui recopie les pas de l'iPhone dans l'archive, même sans ouvrir l'appli.
+    static let archiveTaskID = "app.foulee.perso.k7r2.archive"
+
     @State private var tracker = RunTracker()
+    @State private var activity = ActivityStore()
+    @Environment(\.scenePhase) private var scenePhase
+    private let container: ModelContainer
 
     init() {
-        UserDefaults.standard.register(defaults: ["voice": true])
+        UserDefaults.standard.register(defaults: ["voice": true, "stepGoal": 10_000])
+        do {
+            container = try ModelContainer(for: Run.self, DaySummary.self)
+        } catch {
+            fatalError("Impossible d'ouvrir les données : \(error)")
+        }
     }
 
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environment(tracker)
+                .environment(activity)
                 .tint(.orange)
         }
-        .modelContainer(for: Run.self)
+        .modelContainer(container)
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { Self.scheduleArchive() }
+        }
+        .backgroundTask(.appRefresh(Self.archiveTaskID)) {
+            await Self.runArchive(container: container)
+        }
+    }
+
+    /// Demande à iOS de relancer l'archivage dans quelques heures (iOS choisit le moment exact).
+    static func scheduleArchive() {
+        let request = BGAppRefreshTaskRequest(identifier: archiveTaskID)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 4 * 3600)
+        try? BGTaskScheduler.shared.submit(request)
+    }
+
+    @MainActor
+    static func runArchive(container: ModelContainer) async {
+        scheduleArchive()
+        let context = ModelContext(container)
+        await ActivityArchiver.archive(in: context)
     }
 }
 
 struct ContentView: View {
-    enum Tab: Hashable { case record, history, stats }
+    enum Tab: Hashable { case today, record, history, stats }
 
-    @State private var tab: Tab = .record
+    @State private var tab: Tab = .today
     @State private var demoRun: Run?
     @State private var demoFlyover: DemoFlyover?
     @State private var showRecovered = false
@@ -31,6 +64,9 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $tab) {
+            TodayView()
+                .tabItem { Label("Aujourd'hui", systemImage: "shoeprints.fill") }
+                .tag(Tab.today)
             RecordView()
                 .tabItem { Label("Courir", systemImage: "figure.run") }
                 .tag(Tab.record)
@@ -78,6 +114,8 @@ struct ContentView: View {
         let latest = try? context.fetch(descriptor).first
 
         switch DemoData.screen {
+        case "today":
+            tab = .today
         case "history":
             tab = .history
         case "detail":
