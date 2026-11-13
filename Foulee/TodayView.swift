@@ -196,7 +196,7 @@ struct TodayView: View {
             }
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { _ in
-                    AxisValueLabel(format: .dateTime.weekday(.narrow), centered: true)
+                    AxisValueLabel(format: .dateTime.weekday(.abbreviated), centered: true)
                 }
             }
             .frame(height: 170)
