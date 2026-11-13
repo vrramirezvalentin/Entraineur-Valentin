@@ -109,7 +109,7 @@ struct TodayView: View {
             SectionTitle("Heure par heure")
             Chart {
                 ForEach(Array(activity.hourly.enumerated()), id: \.offset) { hour, steps in
-                    BarMark(x: .value("Heure", hour), y: .value("Pas", steps), width: .ratio(0.7))
+                    BarMark(x: .value("Heure", hour), y: .value("Pas", steps), width: .fixed(8))
                         .foregroundStyle(Color.orange.gradient)
                         .cornerRadius(2)
                 }
