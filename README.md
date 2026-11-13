@@ -6,7 +6,7 @@ Appli iPhone de course à pied. Tout reste sur ton téléphone : pas de compte, 
 
 - **Enregistrement GPS** qui continue écran verrouillé (point bleu en haut de l'écran pendant la course)
 - **En direct** : temps, distance, allure instantanée et moyenne, pas, cadence, dénivelé, tracé sur la carte
-- **Page « Aujourd'hui »** : pas du jour, distance, temps en mouvement, heure par heure, 7 derniers jours, moyennes, record, distance de la semaine, courses du jour et l'historique de chaque journée. Ça vient du podomètre de l'iPhone : **ça compte même quand l'appli n'est pas ouverte**. L'iPhone ne garde que 7 jours d'historique, alors l'appli recopie les journées à chaque ouverture (et en arrière-plan quand iOS le permet). Il suffit de l'ouvrir au moins une fois par semaine pour ne rien perdre.
+- **Page « Général »** (cœur, tout à droite) : pas du jour, distance, temps en mouvement, heure par heure, 7 derniers jours, moyennes, record, distance de la semaine, courses du jour et l'historique de chaque journée. Ça vient du podomètre de l'iPhone : **ça compte même quand l'appli n'est pas ouverte**. L'iPhone ne garde que 7 jours d'historique, alors l'appli recopie les journées à chaque ouverture (et en arrière-plan quand iOS le permet). Il suffit de l'ouvrir au moins une fois par semaine pour ne rien perdre.
 - **Pause / Reprendre / Terminer** — le temps et les pas pendant la pause ne sont pas comptés
 - **Compteur de pas** : c'est le podomètre de l'iPhone (le même que l'app Santé) qui compte. À la fin de la course, le total exact est relu dans l'historique du téléphone. iOS demande l'accès « Mouvements et forme » la première fois.
 - **Annonces vocales** à chaque kilomètre (temps total + temps du dernier km), la musique baisse le temps de l'annonce. Bouton haut-parleur pour couper.
@@ -50,7 +50,7 @@ Il faut un Mac avec **Xcode 16 ou plus récent** (gratuit sur l'App Store) et iO
 | `HistoryView.swift` | Liste des courses |
 | `RunDetailView.swift` | Détail d'une course |
 | `StatsView.swift` | Statistiques et records |
-| `TodayView.swift` | Page « Aujourd'hui » |
+| `TodayView.swift` | Page « Général » |
 | `Activity.swift` | Podomètre, temps en mouvement, archive des journées |
 | `FlyoverView.swift` | Écran du survol 3D |
 | `FlyoverEngine.swift` | Trajectoire de la caméra et déroulé du survol |

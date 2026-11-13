@@ -55,7 +55,7 @@ struct FouleeApp: App {
 struct ContentView: View {
     enum Tab: Hashable { case today, record, history, stats }
 
-    @State private var tab: Tab = .today
+    @State private var tab: Tab = .record
     @State private var demoRun: Run?
     @State private var demoFlyover: DemoFlyover?
     @State private var showRecovered = false
@@ -64,9 +64,6 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $tab) {
-            TodayView()
-                .tabItem { Label("Aujourd'hui", systemImage: "shoeprints.fill") }
-                .tag(Tab.today)
             RecordView()
                 .tabItem { Label("Courir", systemImage: "figure.run") }
                 .tag(Tab.record)
@@ -82,6 +79,9 @@ struct ContentView: View {
             StatsView()
                 .tabItem { Label("Stats", systemImage: "chart.bar.fill") }
                 .tag(Tab.stats)
+            TodayView()
+                .tabItem { Label("Général", systemImage: "heart.fill") }
+                .tag(Tab.today)
         }
         .fullScreenCover(item: $demoFlyover) { item in
             FlyoverView(run: item.run, start: item.start)

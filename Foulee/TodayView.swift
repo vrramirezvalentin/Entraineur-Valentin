@@ -3,7 +3,7 @@ import SwiftData
 import Charts
 import UIKit
 
-/// Page « Aujourd'hui » : pas, distance et temps en mouvement de la journée, comme dans Santé,
+/// Page « Général » : pas, distance et temps en mouvement de la journée, comme dans Santé,
 /// plus la semaine, les moyennes, le record et les courses du jour.
 struct TodayView: View {
     @Environment(ActivityStore.self) private var activity
@@ -48,7 +48,7 @@ struct TodayView: View {
             }
             #endif
             }
-            .navigationTitle("Aujourd'hui")
+            .navigationTitle("Général")
             .refreshable { await activity.refresh(in: context) }
         }
         .task { await activity.refresh(in: context) }
