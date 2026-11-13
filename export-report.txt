@@ -1,0 +1,1 @@
+OK images=935 fps=30 taille=1080x2348 duree=362.3s par_image=387ms attentes_depassees=0 drapeau_fiable=true

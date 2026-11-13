@@ -1,0 +1,457 @@
+Command line invocation:
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/xcodebuild build -project Foulee.xcodeproj -target Foulee -configuration Debug -sdk iphonesimulator -arch arm64 SYMROOT=/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build CODE_SIGNING_ALLOWED=NO
+
+Build settings from command line:
+    ARCHS = arm64
+    CODE_SIGNING_ALLOWED = NO
+    SDKROOT = iphonesimulator26.5
+    SYMROOT = /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'Foulee' in project 'Foulee' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: 952c67a04bdd953dbde79d0745906e45
+Build description path: /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/XCBuildData/952c67a04bdd953dbde79d0745906e45.xcbuilddata
+ClangStatCache /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee.xcodeproj
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -o /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache
+
+CreateBuildDirectory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee.xcodeproj
+    builtin-create-build-directory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee-ef5414b5255204477a20c919c0392e1f-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee.xcodeproj
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee-ef5414b5255204477a20c919c0392e1f-VFS-iphonesimulator/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee.xcodeproj
+    builtin-create-build-directory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_const_extract_protocols.json (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftConstValuesFileList (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.LinkFileList (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-OutputFileMap.json (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyStaticMetadataFileList (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyMetadataFileList (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-project-headers.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-own-target-headers.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-generated-files.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-target-headers.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-non-framework-target-headers.hmap (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    write-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-non-framework-target-headers.hmap
+
+MkDir /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /bin/mkdir -p /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app
+
+MkDir /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/unthinned (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /bin/mkdir -p /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /bin/mkdir -p /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets --compile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region fr --target-device iphone --minimum-deployment-target 17.0 --platform iphonesimulator --bundle-identifier app.foulee.perso.k7r2 --generate-swift-asset-symbols /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CompileAssetCatalogVariant thinned /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /Applications/Xcode_26.6.app/Contents/Developer/usr/bin/actool /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets --compile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --accent-color AccentColor --compress-pngs --enable-on-demand-resources YES --development-region fr --target-device iphone --minimum-deployment-target 17.0 --platform iphonesimulator
+/* com.apple.actool.compilation-results */
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist_thinned
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned/Assets.car
+
+
+SwiftDriver Foulee normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-SwiftDriver -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Foulee -Onone @/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -Xfrontend -serialize-debugging-options -enable-testing -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -F /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64 -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-generated-files.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-own-target-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-project-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-Swift.h -working-directory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin -experimental-emit-module-separately -disable-cmo
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/DeveloperToolsSupport-MR4G8XSBN2PH7FKDM5BERNLY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_stddef-84DALLV3XT85UPUPQIAJR8OLB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_stdbool-CJW1ZP8UD8YR22PX6TY3GULHR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_float-12FCHISG6ZSQZP3DVETNZTGQY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/SwiftShims-CFT3NPRXKD2CG7CY9JM3U617.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_stdarg-839PYC5XWS9FLH3QMPCKIZQJY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_AvailabilityInternal-9NR87M4C4FS4K00XAL4ZM721C.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/ptrauth-DPQ1DMOKRKLB0WOORX57XN2PJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_SwiftConcurrencyShims-9042SH4T7W343BH5DCI7TTW2Z.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/ptrcheck-C8EF05JQYY21U4EL1E4QYX09A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_DarwinFoundation1-D1CFP9QZJHEHN0OMXJ98RMDE6.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/ExtensionFoundation-DBWQUAMYTXZG1E9N1NQGITKPJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_limits-BMEZDZFV9FY7S74ZQCXV5QL7U.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_DarwinFoundation2-3MPFIG1GPAN56M6F0K4REUK6D.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/sys_types-CC47C6YXKTCCPG4CBNUG3P4YA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_stdint-BKHR0N163L86LVFDQDYT7MZZD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_tgmath-8C6VPIY1YXDEXH38HI8Z7HGDE.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_stdatomic-D8RKLT1XL1L28NNP1GG57XE1O.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_DarwinFoundation3-9J5X9ZOB7KEFDKFZC1HJAZYLB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_intrinsics-B8D4JHX6XO3XTDM211XA7VBCB.pcm
+
+LinkAssetCatalog /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Assets.xcassets (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-linkAssetCatalog --thinned /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app --plist-output /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/AppIcon60x60@2x.png (in target 'Foulee' from project 'Foulee')
+note: Emplaced /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Assets.car (in target 'Foulee' from project 'Foulee')
+note: Emplaced /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/AppIcon76x76@2x~ipad.png (in target 'Foulee' from project 'Foulee')
+
+ProcessInfoPlistFile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Info.plist /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Info.plist (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-infoPlistUtility /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/assetcatalog_generated_info.plist -o /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Info.plist
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_Builtin_inttypes-50ZBOLK04T2NL5KYLEOC51Q9A.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Darwin-VG9GS2IM76THBP9K4SMLFSSN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/simd-5PK8F0V93LB8LMBESVZN2EZMO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/MachO-4Z8NVE7XI8ZABZ1B9K8CMS2GF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/ObjectiveC-EXP3ZF7ZBFD8F4L6TXF0RIVO5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/os_object-JQXYYCKW5YS06XM7J6Y0FLIA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/os_workgroup-DWEUPJTPR4UJZTOK9XBJZN8DN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Dispatch-C4DDJ0ABI8HPCBSBYX164RPSJ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Spatial-49O3LMATW612ELLKHIF6FLZIM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/dnssd-ABVOS3XE8LXTSTF94WCK5WHOH.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreFoundation-A59QDMA1DSFFG8HIDY1TPKSY5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/XPC-DT5XRGH399P6THV5IN87X72GW.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CFNetwork-9ZJELT09C6W1BGQ490FZ892BN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreAudioTypes-38B3MOMHJYUOZMX3RMXO6AUSK.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Security-A9B8UVG7NTRAS2PTLS7QP9XT9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreGraphics-9PM5L4TBXOF18S7ZKY51VK6MA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreAudio-452O1BGX81YRWFQOHPM6032TD.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/os-4WAEIOGKK4YTXXHO8S333ISUC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Foundation-9Y4V7ERI0C1JF0AKJ1ZLH7V0O.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreText-6J5OWVAZOWOILFB6Q5TMQJWWB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/ImageIO-57N87STJY0EQ6ON6XGQSYLTRQ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Accessibility-4BG5POHW9V98LRWQOO7RJTZFR.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/_LocationEssentials-XJZGLYTSSCTRQMC6O4M83VB8.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/IOSurface-3156V77YV82Z4XBSYFVDMOKJC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/UIUtilities-8WDM4XK97NVLOZL6SDPPNCNTY.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/UniformTypeIdentifiers-15SMF0TJKXD7UVQHR56G29IO5.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreMIDI-DGY8LBFCB4QUHVZ8IF3EWD0OF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/MediaAccessibility-3SOICRKMEKOA6MI6E8PJT33VA.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreLocation-7GOMPXC85AM0PH0RH8GVRL13T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/OpenGLES-4UUDIDDBNVDYDHV55YZST5ZFB.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/AudioToolbox-8HKZLBGEF0X5PTUYDZMZ5VOZ3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/BackgroundTasks-BT9GKMGW45V4P2DBFX02PRF16.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreTransferable-3N78DA95WAN8BHGO7Z1NV10K.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Metal-7R314MVBU56V62XISUYR64SDC.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreMotion-25R2L17INEY8P6H6N5B2EZHT3.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/DataDetection-4AHJL167YZUGWH75X4GRZ6ZBF.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreData-5QQ1L2DEP54675IXE7MU3H0Z0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Symbols-CLG0P0EB2K0GFWUXHMZD7H5MZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/UserNotifications-8PAZFNNI87Z1C4O1GRCX1HWGX.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Network-IHDNZST2XQ7R77R1OFQBJULO.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreVideo-3SA40O4EIO9YFESBVELKRY8VI.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/FileProvider-36BSZVM9QHQZI1KTEY5PQ7MUM.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/OSLog-5EJRDGJK2GKVXELHJNLZ8FG2T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/AVRouting-3HVM7YPTLEO5HGJQKFBJN81YV.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreMedia-3URDI1QRIPA6HNI0V8S0IS4V7.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/QuartzCore-4FOHX9JKYAXDHRRNZM9PP48WZ.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/CoreImage-OD6ZJ0YRHJSTI0QA44EFB59I.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/SwiftUICore-B89XIER1LWB99KUVM97VLR291.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/MediaToolbox-A9QSZN57ND4I9HMJ9Q8PW6X6S.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/AVFAudio-282ODRHSKUSV2M40PG66KF5W0.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/UIKit-AXV4KIYKI1OYLKQK61TPOBP6T.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/AVFoundation-1H7BH8AHYTGCQ0R2BZLVY4VN9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/Photos-E1U4V9WHSAMNDSEZX02X0H9SN.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/MapKit-5R6PYKJG78CX617FL7331I81V.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/SwiftUI-4K3P04BPZ3OW76WVPHM02CYK9.pcm
+
+SwiftExplicitDependencyGeneratePcm arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules/AVKit-6NS7E1BFN76UBZY3S2TI0I7KT.pcm
+
+SwiftCompile normal arm64 Compiling\ FouleeApp.swift,\ HistoryView.swift,\ Models.swift,\ RecordView.swift,\ RunDetailView.swift,\ RunTracker.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FouleeApp.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/HistoryView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Models.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RecordView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RunDetailView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RunTracker.swift (in target 'Foulee' from project 'Foulee')
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FouleeApp.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/HistoryView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Models.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RecordView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RunDetailView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/RunTracker.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Foulee (in target 'Foulee' from project 'Foulee')
+
+EmitSwiftModule normal arm64 (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 Compiling\ Activity.swift,\ Analysis.swift,\ DemoData.swift,\ FlyoverEngine.swift,\ FlyoverMap.swift,\ FlyoverView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Activity.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Analysis.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/DemoData.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverEngine.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverMap.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverView.swift (in target 'Foulee' from project 'Foulee')
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Activity.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/Analysis.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/DemoData.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverEngine.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverMap.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/FlyoverView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 Compiling\ StatsView.swift,\ TodayView.swift,\ VideoExporter.swift,\ VideoResultView.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/StatsView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/TodayView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/VideoExporter.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/VideoResultView.swift /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Foulee' from project 'Foulee')
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/StatsView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/TodayView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/VideoExporter.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/Foulee/VideoResultView.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftCompile normal arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Foulee (in target 'Foulee' from project 'Foulee')
+
+SwiftDriver\ Compilation\ Requirements Foulee normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Foulee -Onone @/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -Xfrontend -serialize-debugging-options -enable-testing -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -F /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64 -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-generated-files.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-own-target-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-project-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-Swift.h -working-directory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling Activity.swift, Analysis.swift, DemoData.swift, FlyoverEngine.swift, FlyoverMap.swift, FlyoverView.swift (in target 'Foulee' from project 'Foulee')
+
+SwiftMergeGeneratedHeaders /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/Foulee-Swift.h /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-Swift.h (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-Swift.h -o /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/Foulee-Swift.h
+
+Copy /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftdoc (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftdoc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.abi.json (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.abi.json /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftsourceinfo (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftsourceinfo /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling FouleeApp.swift, HistoryView.swift, Models.swift, RecordView.swift, RunDetailView.swift, RunTracker.swift (in target 'Foulee' from project 'Foulee')
+
+SwiftDriverJobDiscovery normal arm64 Compiling StatsView.swift, TodayView.swift, VideoExporter.swift, VideoResultView.swift, GeneratedAssetSymbols.swift (in target 'Foulee' from project 'Foulee')
+
+SwiftDriver\ Compilation Foulee normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-Swift-Compilation -- /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Foulee -Onone @/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -target arm64-apple-ios17.0-simulator -g -Xfrontend -serialize-debugging-options -enable-testing -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 5 -I /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -F /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64 -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/com.apple.DeveloperTools/26.6-17F113/Xcode/SDKStatCaches.noindex/iphonesimulator26.5-23F81a-688ef53f1462e2c8f657fdc38a81448ff45c64a1807a658693f2a61704f17a36.sdkstatcache -output-file-map /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/SwiftExplicitPrecompiledModules -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule -validate-clang-modules-once -clang-build-session-file /var/folders/h5/t85nd63d71x27_8gl5gw3l_w0000gn/C/org.llvm.clang/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-generated-files.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-own-target-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee-project-headers.hmap -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-Swift.h -working-directory /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Foulee normal (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk -O0 -L/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -F/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator -filelist /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.swiftmodule @/Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee-linker-args.resp -o /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Foulee
+
+CopySwiftLibs /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Foulee --scan-folder /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Frameworks --scan-folder /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/PlugIns --scan-folder /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/SystemExtensions --scan-folder /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Extensions --platform iphonesimulator --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.00WsnT/Metal.xctoolchain --toolchain /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v17.6.109.0.00WsnT/Metal.xctoolchain --module-name Foulee --sdk-root /Applications/Xcode_26.6.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator26.5.sdk --xcode-version 17F113 --platform-family iOS --deployment-target 17.0 --bundle-identifier app.foulee.perso.k7r2 --output /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app --target-triple arm64-apple-ios17.0-simulator --binary-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Foulee --dependency-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee_dependency_info.dat --stringsdata-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftFileList --metadata-file-list /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Objects-normal/arm64/Foulee.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-11-13 14:36:28.988 appintentsmetadataprocessor[3054:12698] Starting appintentsmetadataprocessor export
+2026-11-13 14:36:28.991 appintentsmetadataprocessor[3054:12698] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+AppIntentsSSUTraining (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Info.plist --temp-dir-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/ssu --bundle-id app.foulee.perso.k7r2 --product-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app --extracted-metadata-path /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Metadata.appintents --metadata-file-list /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Foulee.build/Debug-iphonesimulator/Foulee.build/Foulee.DependencyMetadataFileList --source-file /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app/Info.plist --archive-ssu-assets
+2026-11-13 14:36:29.043 appintentsnltrainingprocessor[3064:12717] Parsing options for appintentsnltrainingprocessor
+2026-11-13 14:36:29.045 appintentsnltrainingprocessor[3064:12717] Starting AppIntents SSU YAML Generation
+2026-11-13 14:36:29.046 appintentsnltrainingprocessor[3064:12717] No AppShortcuts found - Skipping.
+
+RegisterExecutionPolicyException /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-RegisterExecutionPolicyException /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app
+
+Validate /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    builtin-validationUtility /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app -shallow-bundle -infoplist-subpath Info.plist
+
+Touch /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app (in target 'Foulee' from project 'Foulee')
+    cd /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin
+    /usr/bin/touch -c /Users/runner/work/Entraineur-Valentin/Entraineur-Valentin/build/Debug-iphonesimulator/Foulee.app
+
+** BUILD SUCCEEDED **
+
