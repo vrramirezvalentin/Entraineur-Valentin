@@ -319,6 +319,9 @@ struct FlyoverView: View {
             } label: {
                 Label(model.isPlaying ? "Lecture…" : "Rejouer", systemImage: "arrow.counterclockwise")
                     .font(.headline)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .padding(.horizontal, 8)
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background(.regularMaterial, in: Capsule())
             }
@@ -328,8 +331,14 @@ struct FlyoverView: View {
             Button {
                 startExport(model)
             } label: {
-                Label("Créer la vidéo", systemImage: "video.fill")
+                // Texte agrandi ou petit écran : « Vidéo » au lieu de passer sur deux lignes
+                ViewThatFits(in: .horizontal) {
+                    Label("Créer la vidéo", systemImage: "video.fill").fixedSize()
+                    Label("Vidéo", systemImage: "video.fill").fixedSize()
+                }
                     .font(.headline)
+                    .lineLimit(1)
+                    .padding(.horizontal, 8)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, minHeight: 52)
                     .background(Color.orange, in: Capsule())

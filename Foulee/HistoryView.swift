@@ -68,15 +68,25 @@ struct RunRow: View {
             Text(run.startDate.formatted(date: .abbreviated, time: .shortened))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            HStack(spacing: 16) {
-                Label("\(Fmt.km(run.distance)) km", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
-                Label(Fmt.duration(run.movingTime), systemImage: "stopwatch")
-                Label("\(Fmt.pace(run.averagePace)) /km", systemImage: "speedometer")
+            // Sur une ligne si ça tient, sinon les trois chiffres les uns sous les autres (texte agrandi)
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 16) { stats }
+                VStack(alignment: .leading, spacing: 4) { stats }
             }
             .font(.subheadline.monospacedDigit())
             .labelStyle(CompactLabelStyle())
         }
         .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
+    private var stats: some View {
+        Label("\(Fmt.km(run.distance)) km", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+            .fixedSize()
+        Label(Fmt.duration(run.movingTime), systemImage: "stopwatch")
+            .fixedSize()
+        Label("\(Fmt.pace(run.averagePace)) /km", systemImage: "speedometer")
+            .fixedSize()
     }
 }
 

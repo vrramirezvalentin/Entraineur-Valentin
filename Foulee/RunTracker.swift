@@ -61,7 +61,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         manager.distanceFilter = kCLDistanceFilterNone
         speech.delegate = self
         authorization = manager.authorizationStatus
-        isReducedAccuracy = manager.accuracyAuthorization == .reducedAccuracy
+        isReducedAccuracy = isAuthorized && manager.accuracyAuthorization == .reducedAccuracy
     }
 
     var isAuthorized: Bool {
@@ -241,7 +241,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorization = manager.authorizationStatus
-        isReducedAccuracy = manager.accuracyAuthorization == .reducedAccuracy
+        isReducedAccuracy = isAuthorized && manager.accuracyAuthorization == .reducedAccuracy
         if isAuthorized && (warmingUp || state != .idle) {
             manager.startUpdatingLocation()
         }
@@ -472,7 +472,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         }
         guard let data,
               let saved = try? JSONDecoder().decode(Checkpoint.self, from: data),
-              saved.points.count >= 2, saved.distance >= 20 else { return nil }
+              saved.points.count >= 2, saved.distance >= 100 else { return nil }   // pas de course « fantôme » de quelques mètres
 
         let run = Self.makeRun(start: saved.startDate, end: saved.savedAt, points: saved.points,
                                distance: saved.distance, movingTime: saved.movingTime,

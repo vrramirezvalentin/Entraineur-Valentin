@@ -87,21 +87,6 @@ xcrun simctl location "$UDID" set 45.8990,6.1290 || true
 sleep 2
 launch history; sleep 7; shot 3-recuperation
 
-# --- Premier lancement : aucune course, autorisations pas encore données -----
-xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
-xcrun simctl uninstall "$UDID" "$BID" || true
-xcrun simctl install "$UDID" "$APP"
-xcrun simctl privacy "$UDID" reset all "$BID" || true
-FIRST=(-AppleLanguages "(fr)" -AppleLocale fr_FR)
-xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" >/dev/null; sleep 8; shot n1-premier-lancement
-xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
-xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen history >/dev/null; sleep 5; shot n2-historique-vide
-xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
-xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen stats >/dev/null; sleep 5; shot n3-stats-vides
-xcrun simctl privacy "$UDID" revoke location "$BID" || true
-xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
-xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen record >/dev/null; sleep 6; shot n4-localisation-refusee
-
 # --- Mode sombre --------------------------------------------------------------
 xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
 xcrun simctl uninstall "$UDID" "$BID" || true
@@ -130,6 +115,23 @@ launch flyover; sleep 12; shot g5-gros-texte-survol
 xcrun simctl ui "$UDID" content_size large || true
 xcrun simctl shutdown "$UDID" || true
 
+# --- Premier lancement : aucune course ---------------------------------------
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl uninstall "$UDID" "$BID" || true
+xcrun simctl install "$UDID" "$APP"
+FIRST=(-AppleLanguages "(fr)" -AppleLocale fr_FR)
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" >/dev/null; sleep 8; shot n1-premier-lancement
+xcrun simctl privacy "$UDID" grant location "$BID" || true
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" >/dev/null; sleep 6; shot n2-pret-sans-course
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen history >/dev/null; sleep 5; shot n3-historique-vide
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen stats >/dev/null; sleep 5; shot n4-stats-vides
+xcrun simctl privacy "$UDID" revoke location "$BID" || true
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen record >/dev/null; sleep 6; shot n5-localisation-refusee
+
 # --- Petit iPhone -------------------------------------------------------------
 SMALL=$(xcrun simctl list devices available -j | python3 -c '
 import json, sys
@@ -156,6 +158,7 @@ if [ -n "$SMALL" ]; then
   launch flyover; sleep 12; shot p4-petit-survol
   xcrun simctl ui "$UDID" content_size extra-extra-large || true
   launch flyover; sleep 12; shot p5-petit-gros-texte-survol
+  launch history; sleep 5;  shot p7-petit-gros-texte-historique
   xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
   launch running; sleep 30; shot p6-petit-gros-texte-course
   xcrun simctl ui "$UDID" content_size large || true

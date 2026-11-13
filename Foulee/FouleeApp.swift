@@ -71,7 +71,9 @@ struct ContentView: View {
         // -screen fonctionne aussi sans -demo, pour tester le tout premier lancement (aucune course)
         guard DemoData.isEnabled || !DemoData.screen.isEmpty else { return }
         DemoData.seedIfNeeded(context)
-        var descriptor = FetchDescriptor<Run>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
+        // La plus récente course « de démo » (on ignore les petites courses créées par les tests)
+        var descriptor = FetchDescriptor<Run>(predicate: #Predicate { $0.distance > 2000 },
+                                              sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         descriptor.fetchLimit = 1
         let latest = try? context.fetch(descriptor).first
 
