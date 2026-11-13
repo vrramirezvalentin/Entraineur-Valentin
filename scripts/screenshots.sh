@@ -113,7 +113,6 @@ launch history; sleep 5;  shot g3-gros-texte-historique
 launch stats;   sleep 5;  shot g4-gros-texte-stats
 launch flyover; sleep 12; shot g5-gros-texte-survol
 xcrun simctl ui "$UDID" content_size large || true
-xcrun simctl shutdown "$UDID" || true
 
 # --- Premier lancement : aucune course ---------------------------------------
 xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
@@ -131,6 +130,8 @@ xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen stats >/dev/null; sleep
 xcrun simctl privacy "$UDID" revoke location "$BID" || true
 xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
 xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen record >/dev/null; sleep 6; shot n5-localisation-refusee
+
+xcrun simctl shutdown "$UDID" || true
 
 # --- Petit iPhone -------------------------------------------------------------
 SMALL=$(xcrun simctl list devices available -j | python3 -c '
