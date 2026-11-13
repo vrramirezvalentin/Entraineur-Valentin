@@ -3,8 +3,8 @@ import SwiftData
 import Charts
 import UIKit
 
-/// Page « Aujourd'hui » : pas, distance, étages et temps en mouvement de la journée, comme dans Santé,
-/// plus la semaine, les moyennes, le record, la série et les courses du jour.
+/// Page « Aujourd'hui » : pas, distance et temps en mouvement de la journée, comme dans Santé,
+/// plus la semaine, les moyennes, le record et les courses du jour.
 struct TodayView: View {
     @Environment(ActivityStore.self) private var activity
     @Environment(\.modelContext) private var context
@@ -12,8 +12,6 @@ struct TodayView: View {
     @Environment(\.openURL) private var openURL
     @Query(sort: \DaySummary.day, order: .reverse) private var days: [DaySummary]
     @Query(sort: \Run.startDate, order: .reverse) private var runs: [Run]
-    @AppStorage("stepGoal") private var goal = 10_000
-    @State private var choosingGoal = false
 
     private var today: Date { Calendar.current.startOfDay(for: Date()) }
 
@@ -27,7 +25,7 @@ struct TodayView: View {
                     } else if activity.access == .unavailable {
                         accessCard(denied: false)
                     }
-                    ring
+                    hero
                     cards
                     hourlyChart
                     weekChart.id("semaine")
@@ -52,12 +50,6 @@ struct TodayView: View {
             }
             .navigationTitle("Aujourd'hui")
             .refreshable { await activity.refresh(in: context) }
-            .confirmationDialog("Objectif de pas par jour", isPresented: $choosingGoal, titleVisibility: .visible) {
-                ForEach([5_000, 6_000, 8_000, 10_000, 12_000, 15_000], id: \.self) { value in
-                    Button(value.formatted(.number) + " pas") { goal = value }
-                }
-                Button("Annuler", role: .cancel) {}
-            }
         }
         .task { await activity.refresh(in: context) }
         .onChange(of: scenePhase) { _, phase in
@@ -71,56 +63,32 @@ struct TodayView: View {
         .onDisappear { activity.stopLive() }
     }
 
-    // MARK: - Anneau
+    // MARK: - Pas du jour
 
-    private var ring: some View {
-        let progress = goal > 0 ? Double(activity.steps) / Double(goal) : 0
-        return VStack(spacing: 12) {
+    private var hero: some View {
+        VStack(spacing: 4) {
             Text(Fmt.capitalizedFirst(Date().formatted(.dateTime.weekday(.wide).day().month(.wide))))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
-            ZStack {
-                Circle()
-                    .stroke(Color.orange.opacity(0.18), lineWidth: 22)
-                Circle()
-                    .trim(from: 0, to: min(1, progress))
-                    .stroke(Color.orange.gradient, style: StrokeStyle(lineWidth: 22, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
-                    .animation(.easeOut(duration: 0.6), value: progress)
-                VStack(spacing: 2) {
-                    Text(activity.steps.formatted(.number))
-                        .font(.system(size: 46, weight: .bold, design: .rounded))
-                        .monospacedDigit()
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.5)
-                        .contentTransition(.numericText())
-                    Text("pas")
-                        .font(.headline)
-                        .foregroundStyle(.secondary)
-                    if progress >= 1 {
-                        Label("Objectif atteint", systemImage: "checkmark.seal.fill")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.orange)
-                            .padding(.top, 4)
-                    }
-                }
-                .padding(.horizontal, 30)
-            }
-            .frame(width: 230, height: 230)
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(activity.steps) pas sur un objectif de \(goal)")
-
-            Button {
-                choosingGoal = true
-            } label: {
-                HStack(spacing: 4) {
-                    Text("Objectif \(goal.formatted(.number)) pas")
-                    Image(systemName: "pencil")
-                }
-                .font(.subheadline.weight(.medium))
-            }
+            Image(systemName: "shoeprints.fill")
+                .font(.title)
+                .foregroundStyle(.orange)
+                .padding(.vertical, 6)
+            Text(activity.steps.formatted(.number))
+                .font(.system(size: 64, weight: .bold, design: .rounded))
+                .monospacedDigit()
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .contentTransition(.numericText())
+                .animation(.easeOut, value: activity.steps)
+            Text("pas aujourd'hui")
+                .font(.headline)
+                .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .background(Color.orange.opacity(0.1), in: RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 
     // MARK: - Chiffres du jour
@@ -131,10 +99,6 @@ struct TodayView: View {
                       value: Fmt.km(activity.distance), unit: "km")
             TodayCard(icon: "figure.walk.motion", title: "En mouvement",
                       value: "\(Int(activity.activeMinutes.rounded()))", unit: "min")
-            TodayCard(icon: "figure.stairs", title: "Étages montés",
-                      value: "\(activity.floorsUp)", unit: nil)
-            TodayCard(icon: "figure.run", title: "Course du jour",
-                      value: Fmt.km(todayRunsList.reduce(0.0) { $0 + $1.distance }, decimals: 1), unit: "km")
         }
     }
 
@@ -187,12 +151,9 @@ struct TodayView: View {
             Chart {
                 ForEach(lastSevenDays) { bar in
                     BarMark(x: .value("Jour", bar.day, unit: .day), y: .value("Pas", bar.steps))
-                        .foregroundStyle(bar.steps >= goal ? Color.orange : Color.orange.opacity(0.45))
+                        .foregroundStyle(Color.orange.gradient)
                         .cornerRadius(5)
                 }
-                RuleMark(y: .value("Objectif", goal))
-                    .foregroundStyle(Color.secondary)
-                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
             }
             .chartXAxis {
                 AxisMarks(values: .stride(by: .day)) { _ in
@@ -217,21 +178,13 @@ struct TodayView: View {
         days.max { $0.steps < $1.steps }
     }
 
-    /// Jours consécutifs avec l'objectif atteint (aujourd'hui compte s'il est déjà atteint).
-    private var streak: Int {
+    /// Distance marchée et courue sur les 7 derniers jours (aujourd'hui compris)
+    private var weekDistance: Double {
         let calendar = Calendar.current
-        let byDay = Dictionary(days.map { ($0.day, $0.steps) }, uniquingKeysWith: max)
-        var count = 0
-        var day = today
-        if max(activity.steps, byDay[today] ?? 0) < goal {
-            day = calendar.date(byAdding: .day, value: -1, to: today) ?? today
-        }
-        while (byDay[day] ?? 0) >= goal || (day == today && activity.steps >= goal) {
-            count += 1
-            guard let previous = calendar.date(byAdding: .day, value: -1, to: day) else { break }
-            day = previous
-        }
-        return count
+        guard let from = calendar.date(byAdding: .day, value: -6, to: today) else { return 0 }
+        let past = days.filter { $0.day >= from && $0.day < today }.reduce(0.0) { $0 + $1.distance }
+        let todayArchived = days.first { $0.day == today }?.distance ?? 0
+        return past + max(activity.distance, todayArchived)
     }
 
     private var summary: some View {
@@ -244,9 +197,8 @@ struct TodayView: View {
                       value: record.map { $0.steps.formatted(.number) } ?? "–",
                       unit: nil,
                       detail: record.map { $0.day.formatted(.dateTime.day().month(.abbreviated)) })
-            TodayCard(icon: "flame.fill", title: "Série",
-                      value: "\(streak)", unit: streak > 1 ? "jours" : "jour",
-                      detail: "objectif atteint")
+            TodayCard(icon: "point.topleft.down.to.point.bottomright.curvepath", title: "Distance 7 jours",
+                      value: Fmt.km(weekDistance, decimals: 1), unit: "km")
         }
     }
 
@@ -291,7 +243,7 @@ struct TodayView: View {
                 SectionTitle("Jours précédents")
                     .padding(.bottom, 6)
                 ForEach(previous) { day in
-                    DayRow(summary: day, goal: goal)
+                    DayRow(summary: day)
                     Divider()
                 }
             }
@@ -362,26 +314,18 @@ private struct TodayCard: View {
 
 private struct DayRow: View {
     let summary: DaySummary
-    let goal: Int
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline) {
                 Text(Fmt.capitalizedFirst(summary.day.formatted(.dateTime.weekday(.wide).day().month(.wide))))
                     .font(.subheadline.weight(.medium))
                 Spacer()
-                if summary.steps >= goal {
-                    Image(systemName: "checkmark.seal.fill")
-                        .foregroundStyle(.orange)
-                        .font(.caption)
-                }
                 Text("\(summary.steps.formatted(.number)) pas")
                     .font(.subheadline.weight(.semibold))
                     .monospacedDigit()
             }
-            ProgressView(value: min(1, Double(summary.steps) / Double(max(1, goal))))
-                .tint(.orange)
-            Text("\(Fmt.km(summary.distance, decimals: 1)) km · \(summary.floorsUp) étages · \(Int(summary.activeMinutes.rounded())) min en mouvement")
+            Text("\(Fmt.km(summary.distance, decimals: 1)) km · \(Int(summary.activeMinutes.rounded())) min en mouvement")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

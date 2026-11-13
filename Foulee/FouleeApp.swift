@@ -13,7 +13,7 @@ struct FouleeApp: App {
     private let container: ModelContainer
 
     init() {
-        UserDefaults.standard.register(defaults: ["voice": true, "stepGoal": 10_000])
+        UserDefaults.standard.register(defaults: ["voice": true])
         do {
             container = try ModelContainer(for: Run.self, DaySummary.self)
         } catch {
