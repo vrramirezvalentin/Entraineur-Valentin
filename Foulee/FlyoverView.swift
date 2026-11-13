@@ -321,8 +321,8 @@ struct FlyoverView: View {
                     .font(.headline)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
-                    .padding(.horizontal, 8)
-                    .frame(maxWidth: .infinity, minHeight: 52)
+                    .padding(.horizontal, 18)
+                    .frame(minHeight: 52)
                     .background(.regularMaterial, in: Capsule())
             }
             .tint(.primary)
