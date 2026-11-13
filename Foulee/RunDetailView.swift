@@ -141,32 +141,33 @@ struct RunDetailView: View {
 
     private var splitsSection: some View {
         let fastest = splits.map(\.pace).filter { $0 > 0 }.min() ?? 1
+        // Grille : les colonnes s'élargissent toutes seules si le texte est agrandi
         return VStack(alignment: .leading, spacing: 10) {
             SectionTitle("Temps intermédiaires")
-            HStack {
-                Text("Km").frame(width: 40, alignment: .leading)
-                Text("Allure").frame(width: 56, alignment: .leading)
-                Spacer()
-                Text("Dén.").frame(width: 48, alignment: .trailing)
-            }
-            .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
-
-            ForEach(splits) { split in
-                HStack(spacing: 8) {
-                    Text(split.distance < 999
-                         ? (split.distance / 1000).formatted(.number.precision(.fractionLength(1)))
-                         : "\(split.index)")
-                        .frame(width: 40, alignment: .leading)
-                    Text(Fmt.pace(split.pace))
-                        .frame(width: 56, alignment: .leading)
-                    ProgressView(value: split.pace > 0 ? fastest / split.pace : 0)
-                        .tint(split.pace == fastest ? Color.orange : Color.orange.opacity(0.55))
-                    Text("+\(Int(split.elevationGain.rounded()))")
-                        .frame(width: 48, alignment: .trailing)
-                        .foregroundStyle(.secondary)
+            Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+                GridRow {
+                    Text("Km")
+                    Text("Allure")
+                    Color.clear.frame(height: 1)
+                    Text("Dén.").gridColumnAlignment(.trailing)
                 }
-                .font(.subheadline.monospacedDigit())
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+                ForEach(splits) { split in
+                    GridRow {
+                        Text(split.distance < 999
+                             ? (split.distance / 1000).formatted(.number.precision(.fractionLength(1)))
+                             : "\(split.index)")
+                        Text(Fmt.pace(split.pace))
+                        ProgressView(value: split.pace > 0 ? min(1, fastest / split.pace) : 0)
+                            .tint(split.pace == fastest ? Color.orange : Color.orange.opacity(0.55))
+                        Text("+\(Int(split.elevationGain.rounded()))")
+                            .foregroundStyle(.secondary)
+                    }
+                    .font(.subheadline.monospacedDigit())
+                    .lineLimit(1)
+                }
             }
         }
     }
@@ -210,9 +211,11 @@ struct RunDetailView: View {
                         Text(effort.label)
                         Spacer()
                         Text(Fmt.duration(time)).bold()
+                            .fixedSize()
                         Text("\(Fmt.pace(time / Double(effort.meters) * 1000)) /km")
                             .foregroundStyle(.secondary)
-                            .frame(width: 80, alignment: .trailing)
+                            .fixedSize()
+                            .frame(minWidth: 80, alignment: .trailing)
                     }
                     .monospacedDigit()
                 }
@@ -247,6 +250,8 @@ struct StatCell: View {
                     Text(unit).font(.caption).foregroundStyle(.secondary)
                 }
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
         }
     }
 }
