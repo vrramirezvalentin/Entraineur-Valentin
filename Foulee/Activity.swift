@@ -47,7 +47,7 @@ enum ActivityArchiver {
         guard CMPedometer.isStepCountingAvailable() else { return .unavailable }
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: now)
-        var access = MotionAccess.available
+        let access = MotionAccess.available
 
         // Temps en mouvement, jour par jour, sur la même période
         let weekStart = calendar.date(byAdding: .day, value: -6, to: today) ?? today
@@ -58,9 +58,8 @@ enum ActivityArchiver {
                   let next = calendar.date(byAdding: .day, value: 1, to: start) else { continue }
             let result = await totals(from: start, to: min(next, now))
             switch result {
-            case .failure(let denied):
-                if denied { return .denied }
-                access = .available
+            case .failure(let failure):
+                if failure.denied { return .denied }
                 continue
             case .success(let totals):
                 upsert(day: start, totals: totals, minutes: minutes[start] ?? 0, in: context)
