@@ -5,8 +5,8 @@ import AVFoundation
 import SwiftData
 import Observation
 
-/// Enregistre la course : GPS (y compris écran verrouillé), distance, dénivelé, pas,
-/// temps intermédiaires et annonces vocales.
+/// Enregistre la course : GPS (y compris écran verrouillé), distance, dénivelé (baromètre),
+/// pas, temps intermédiaires et annonces vocales.
 @Observable
 final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizerDelegate {
     enum State { case idle, running, paused }
@@ -34,11 +34,22 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
     private let manager = CLLocationManager()
     private let speech = AVSpeechSynthesizer()
     private let pedometer = CMPedometer()
+    private let altimeter = CMAltimeter()
     private let ioQueue = DispatchQueue(label: "run-checkpoint", qos: .utility)
 
     @ObservationIgnored private var lastLocation: CLLocation? = nil
     @ObservationIgnored private var altitudeAnchor: Double? = nil
     @ObservationIgnored private var lastGoodAltitude: Double? = nil
+    // Dénivelé : le baromètre est prioritaire, le GPS sert de secours
+    @ObservationIgnored private var gpsGain = 0.0
+    @ObservationIgnored private var baroGain = 0.0
+    @ObservationIgnored private var usingBarometer = false
+    /// Altitude relative donnée par le baromètre depuis le (re)démarrage du capteur
+    @ObservationIgnored private var baroRelative: Double? = nil
+    @ObservationIgnored private var baroAnchor: Double? = nil
+    /// altitude réelle ≈ altitude relative + décalage (recalé doucement sur le GPS)
+    @ObservationIgnored private var baroOffset: Double? = nil
+    @ObservationIgnored private var altimeterToken = 0
     @ObservationIgnored private var accumulatedMoving: Double = 0
     @ObservationIgnored private var segmentStart: Date? = nil
     @ObservationIgnored private var segment = 0
@@ -111,6 +122,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         manager.showsBackgroundLocationIndicator = true
         manager.startUpdatingLocation()
         startPedometer(from: now)
+        startAltimeter()
         announce("C'est parti !")
     }
 
@@ -126,6 +138,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         currentPace = 0
         state = .paused
         stopPedometer()
+        stopAltimeter()
         // Le podomètre livre ses chiffres avec un léger retard : on relit le total exact.
         let intervals = movingIntervals
         querySteps(intervals) { [weak self] total in
@@ -144,6 +157,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         segmentStart = now
         state = .running
         startPedometer(from: now)
+        startAltimeter()
         announce("Reprise")
     }
 
@@ -177,6 +191,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         manager.stopUpdatingLocation()
         manager.allowsBackgroundLocationUpdates = false
         stopPedometer()
+        stopAltimeter()
         removeCheckpoint()
         state = .idle
         reset()
@@ -195,6 +210,12 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
         lastLocation = nil
         altitudeAnchor = nil
         lastGoodAltitude = nil
+        gpsGain = 0
+        baroGain = 0
+        usingBarometer = false
+        baroRelative = nil
+        baroAnchor = nil
+        baroOffset = nil
         accumulatedMoving = 0
         segmentStart = nil
         segment = 0
@@ -276,7 +297,8 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
             distance += d
         }
 
-        // Dénivelé positif avec un seuil de 3 m pour filtrer le bruit d'altitude
+        // Altitude GPS : sert de secours pour le dénivelé (seuil de 3 m contre le bruit)
+        // et à caler l'altitude réelle du baromètre.
         var altitude = lastGoodAltitude ?? loc.altitude
         if loc.verticalAccuracy >= 0, loc.verticalAccuracy <= 20 {
             altitude = loc.altitude
@@ -284,7 +306,7 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
             if let anchor = altitudeAnchor {
                 let diff = altitude - anchor
                 if diff >= 3 {
-                    elevationGain += diff
+                    gpsGain += diff
                     altitudeAnchor = altitude
                 } else if diff <= -3 {
                     altitudeAnchor = altitude
@@ -292,6 +314,16 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
             } else {
                 altitudeAnchor = altitude
             }
+            if usingBarometer, let rel = baroRelative, loc.verticalAccuracy <= 15 {
+                let target = loc.altitude - rel
+                baroOffset = baroOffset.map { $0 + (target - $0) * 0.02 } ?? target
+            }
+        }
+        if usingBarometer, let rel = baroRelative {
+            if baroOffset == nil { baroOffset = altitude - rel }
+            altitude = rel + (baroOffset ?? 0)
+        } else {
+            elevationGain = gpsGain
         }
 
         let moving = movingTime(at: loc.timestamp)
@@ -335,6 +367,57 @@ final class RunTracker: NSObject, CLLocationManagerDelegate, AVSpeechSynthesizer
             let k = split.index
             announce("\(k) kilomètre\(k > 1 ? "s" : ""). Temps \(Fmt.spokenDuration(moving)). Dernier kilomètre en \(Fmt.spokenDuration(split.duration)).")
         }
+    }
+
+    // MARK: - Dénivelé (baromètre de l'iPhone)
+
+    /// Le baromètre mesure les variations de pression de l'air : il voit une montée de quelques
+    /// dizaines de centimètres, là où l'altitude GPS se trompe facilement de 10 m.
+    private func startAltimeter() {
+        guard CMAltimeter.isRelativeAltitudeAvailable() else { return }
+        let status = CMAltimeter.authorizationStatus()
+        guard status != .denied, status != .restricted else { return }
+        altimeterToken += 1
+        let token = altimeterToken
+        baroRelative = nil
+        baroAnchor = nil
+        altimeter.startRelativeAltitudeUpdates(to: .main) { [weak self] data, error in
+            guard let self, self.altimeterToken == token, self.state == .running,
+                  let data, error == nil else { return }
+            self.handleBarometer(data.relativeAltitude.doubleValue)
+        }
+    }
+
+    private func stopAltimeter() {
+        altimeterToken += 1
+        altimeter.stopRelativeAltitudeUpdates()
+        baroRelative = nil
+        baroAnchor = nil
+        // Le capteur repart de zéro à la reprise : le décalage sera recalculé
+        // pour que l'altitude continue là où elle s'était arrêtée.
+        baroOffset = nil
+    }
+
+    private func handleBarometer(_ relative: Double) {
+        usingBarometer = true
+        if baroOffset == nil, let last = points.last?.alt {
+            baroOffset = last - relative
+        }
+        baroRelative = relative
+        // Dénivelé positif : on ne compte une montée qu'au-delà de 1 m, pour ignorer
+        // les petites variations de pression (vent, respiration du capteur).
+        if let anchor = baroAnchor {
+            let diff = relative - anchor
+            if diff >= 1 {
+                baroGain += diff
+                baroAnchor = relative
+            } else if diff <= -1 {
+                baroAnchor = relative
+            }
+        } else {
+            baroAnchor = relative
+        }
+        elevationGain = baroGain
     }
 
     // MARK: - Pas (podomètre de l'iPhone)
