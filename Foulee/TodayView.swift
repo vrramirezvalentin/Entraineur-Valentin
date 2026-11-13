@@ -55,7 +55,7 @@ struct TodayView: View {
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 activity.resetIfNewDay()
-                Task { await activity.refresh(in: context) }
+                activity.startLive()
             } else if phase == .background {
                 activity.stopLive()
             }

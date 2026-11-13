@@ -61,6 +61,8 @@ struct ContentView: View {
     @State private var showRecovered = false
     @Environment(\.modelContext) private var context
     @Environment(RunTracker.self) private var tracker
+    @Environment(ActivityStore.self) private var activity
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView(selection: $tab) {
@@ -97,6 +99,15 @@ struct ContentView: View {
                 showRecovered = true
             }
             await setUpDemo()
+            // Archive des pas à chaque ouverture, quel que soit l'onglet affiché
+            await activity.refresh(in: context)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                Task { await activity.refresh(in: context) }
+            } else if phase == .background {
+                activity.stopLive()
+            }
         }
     }
 
