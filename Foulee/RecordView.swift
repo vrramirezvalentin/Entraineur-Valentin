@@ -13,6 +13,7 @@ struct RecordView: View {
     @State private var confirmFinish = false
     @State private var savedRun: Run?
     @State private var tooShort = false
+    @State private var panelHeight: CGFloat = 0
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -28,8 +29,11 @@ struct RecordView: View {
                 MapUserLocationButton()
                 MapCompass()
             }
+            // Le point bleu et le tracé restent dans la partie visible, au-dessus du panneau
+            .safeAreaPadding(.bottom, panelHeight)
 
             panel
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { panelHeight = $0 }
         }
         .onAppear { tracker.warmUp() }
         .onDisappear { tracker.coolDown() }

@@ -111,6 +111,12 @@ enum Fmt {
         (meters / 1000).formatted(.number.precision(.fractionLength(decimals)))
     }
 
+    /// « mercredi 11 novembre » → « Mercredi 11 novembre » (seule la première lettre en majuscule)
+    static func capitalizedFirst(_ text: String) -> String {
+        guard let first = text.first else { return text }
+        return first.uppercased() + text.dropFirst()
+    }
+
     /// 7 492 (pas), ou – si inconnu
     static func steps(_ count: Int) -> String {
         count > 0 ? count.formatted(.number) : "–"

@@ -36,7 +36,8 @@ struct RunDetailView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     TextField("Titre", text: $run.title)
                         .font(.title2.bold())
-                    Text(run.startDate.formatted(date: .complete, time: .shortened).capitalized)
+                        .submitLabel(.done)
+                    Text(Fmt.capitalizedFirst(run.startDate.formatted(date: .complete, time: .shortened)))
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -56,6 +57,13 @@ struct RunDetailView: View {
                 }
             }
             .padding()
+        }
+        .scrollDismissesKeyboard(.interactively)
+        .onDisappear {
+            // Un titre effacé reprend le titre automatique
+            if run.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                run.title = RunAnalysis.defaultTitle(for: run.startDate)
+            }
         }
         .fullScreenCover(isPresented: $showFlyover) {
             FlyoverView(run: run)
@@ -84,15 +92,16 @@ struct RunDetailView: View {
             }
             if let first = points.first {
                 Annotation("Départ", coordinate: first.coordinate) {
-                    Circle().fill(.green).frame(width: 14, height: 14)
+                    // Plus gros que l'arrivée : sur une boucle, les deux restent visibles
+                    Circle().fill(.green).frame(width: 22, height: 22)
                         .overlay(Circle().stroke(.white, lineWidth: 3))
                 }
                 .annotationTitles(.hidden)
             }
             if let last = points.last {
                 Annotation("Arrivée", coordinate: last.coordinate) {
-                    Circle().fill(.red).frame(width: 14, height: 14)
-                        .overlay(Circle().stroke(.white, lineWidth: 3))
+                    Circle().fill(.red).frame(width: 12, height: 12)
+                        .overlay(Circle().stroke(.white, lineWidth: 2.5))
                 }
                 .annotationTitles(.hidden)
             }

@@ -68,7 +68,8 @@ struct ContentView: View {
     @MainActor
     private func setUpDemo() async {
         #if DEBUG
-        guard DemoData.isEnabled else { return }
+        // -screen fonctionne aussi sans -demo, pour tester le tout premier lancement (aucune course)
+        guard DemoData.isEnabled || !DemoData.screen.isEmpty else { return }
         DemoData.seedIfNeeded(context)
         var descriptor = FetchDescriptor<Run>(sortBy: [SortDescriptor(\.startDate, order: .reverse)])
         descriptor.fetchLimit = 1

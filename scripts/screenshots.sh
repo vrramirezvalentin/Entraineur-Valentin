@@ -87,4 +87,80 @@ xcrun simctl location "$UDID" set 45.8990,6.1290 || true
 sleep 2
 launch history; sleep 7; shot 3-recuperation
 
+# --- Premier lancement : aucune course, autorisations pas encore données -----
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl uninstall "$UDID" "$BID" || true
+xcrun simctl install "$UDID" "$APP"
+xcrun simctl privacy "$UDID" reset all "$BID" || true
+FIRST=(-AppleLanguages "(fr)" -AppleLocale fr_FR)
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" >/dev/null; sleep 8; shot n1-premier-lancement
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen history >/dev/null; sleep 5; shot n2-historique-vide
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen stats >/dev/null; sleep 5; shot n3-stats-vides
+xcrun simctl privacy "$UDID" revoke location "$BID" || true
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl launch "$UDID" "$BID" "${FIRST[@]}" -screen record >/dev/null; sleep 6; shot n4-localisation-refusee
+
+# --- Mode sombre --------------------------------------------------------------
+xcrun simctl terminate "$UDID" "$BID" >/dev/null 2>&1 || true
+xcrun simctl uninstall "$UDID" "$BID" || true
+install_app
+xcrun simctl ui "$UDID" appearance dark || true
+launch history; sleep 15
+launch record;  sleep 8;  shot d1-sombre-pret
+launch detail;  sleep 8;  shot d2-sombre-detail
+launch stats;   sleep 5;  shot d3-sombre-stats
+launch flyover; sleep 12; shot d4-sombre-survol
+xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
+launch running; sleep 40; shot d5-sombre-course
+xcrun simctl location "$UDID" clear || true
+xcrun simctl location "$UDID" set 45.8990,6.1290 || true
+xcrun simctl ui "$UDID" appearance light || true
+
+# --- Texte agrandi (réglage d'accessibilité courant) -------------------------
+xcrun simctl ui "$UDID" content_size extra-extra-large || true
+xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
+launch running; sleep 40; shot g1-gros-texte-course
+xcrun simctl location "$UDID" clear || true
+launch detail;  sleep 8;  shot g2-gros-texte-detail
+launch history; sleep 5;  shot g3-gros-texte-historique
+launch stats;   sleep 5;  shot g4-gros-texte-stats
+launch flyover; sleep 12; shot g5-gros-texte-survol
+xcrun simctl ui "$UDID" content_size large || true
+xcrun simctl shutdown "$UDID" || true
+
+# --- Petit iPhone -------------------------------------------------------------
+SMALL=$(xcrun simctl list devices available -j | python3 -c '
+import json, sys
+d = json.load(sys.stdin)["devices"]
+devs = [x for rt, l in d.items() if "iOS" in rt for x in l if x["name"].startswith("iPhone")]
+for want in ("iPhone SE", "iPhone 16e", "iPhone 17e", "mini"):
+    m = [x for x in devs if want in x["name"]]
+    if m:
+        print(m[-1]["udid"]); break')
+if [ -n "$SMALL" ]; then
+  UDID="$SMALL"
+  echo "Petit iPhone : $(xcrun simctl list devices | grep "$UDID" | head -1)" | tee -a "$OUT/simulator.txt"
+  xcrun simctl boot "$UDID" || true
+  xcrun simctl bootstatus "$UDID" -b
+  xcrun simctl status_bar "$UDID" override --time "9:41" --batteryState charged --batteryLevel 100 || true
+  install_app
+  xcrun simctl location "$UDID" set 45.8990,6.1290 || true
+  launch history; sleep 15
+  xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
+  launch running; sleep 40; shot p1-petit-course
+  xcrun simctl location "$UDID" clear || true
+  launch detail;  sleep 8;  shot p2-petit-detail
+  launch stats;   sleep 5;  shot p3-petit-stats
+  launch flyover; sleep 12; shot p4-petit-survol
+  xcrun simctl ui "$UDID" content_size extra-extra-large || true
+  launch flyover; sleep 12; shot p5-petit-gros-texte-survol
+  xcrun simctl location "$UDID" start --speed=3.3 --interval=1 $WAYPOINTS || true
+  launch running; sleep 30; shot p6-petit-gros-texte-course
+  xcrun simctl ui "$UDID" content_size large || true
+else
+  echo "Aucun petit iPhone disponible" | tee -a "$OUT/simulator.txt"
+fi
+
 ls -la "$OUT" "$OUT/screens"

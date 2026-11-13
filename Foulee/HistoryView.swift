@@ -45,7 +45,7 @@ struct HistoryView: View {
                                 }
                             } header: {
                                 HStack {
-                                    Text(month.start.formatted(.dateTime.month(.wide).year()).capitalized)
+                                    Text(Fmt.capitalizedFirst(month.start.formatted(.dateTime.month(.wide).year())))
                                     Spacer()
                                     Text("\(Fmt.km(month.runs.reduce(0.0) { $0 + $1.distance }, decimals: 1)) km")
                                 }

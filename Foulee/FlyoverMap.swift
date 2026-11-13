@@ -72,6 +72,8 @@ final class FlyoverMapController: NSObject, MKMapViewDelegate {
         mapView.isPitchEnabled = true
         mapView.isRotateEnabled = true
         mapView.register(RunnerDotView.self, forAnnotationViewWithReuseIdentifier: RunnerDotView.reuseID)
+        // Logo et mentions légales de Plans au-dessus du profil d'altitude
+        mapView.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 18, bottom: 190, trailing: 18)
         setSatellite(true)
     }
 
